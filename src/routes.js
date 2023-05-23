@@ -1,4 +1,5 @@
 const {authHandler} = require('./handler/authHandler');
+const {userInfoHandler} = require('./handler/userHandler');
 
 const routes = [
   {
@@ -12,6 +13,11 @@ const routes = [
     method: 'GET',
     path: '/auth',
     handler: authHandler,
+  },
+  {
+    method: 'GET',
+    path: '/userinfo',
+    handler: userInfoHandler,
   },
 ];
 
