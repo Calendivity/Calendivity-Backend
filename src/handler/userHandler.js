@@ -1,7 +1,7 @@
 const axios = require('axios');
 
 const userInfoHandler = (request, h) => {
-  const {headers} = request.headers;
+  const {headers} = request;
   if (!headers.authorization) {
     const response = h.response({
       message: 'unauthorized access',
@@ -10,15 +10,13 @@ const userInfoHandler = (request, h) => {
     return response;
   }
   const config = {
-    headers: {Authorization: request.headers.authorization},
+    headers: {Authorization: headers.authorization},
   };
 
-  axios
+  return axios
     .get('https://www.googleapis.com/userinfo/v2/me', config)
     .then((res) => {
-      const response = h.response({
-        data: res.data,
-      });
+      const response = h.response(res.data);
       return response;
     })
     .catch((err) => {
