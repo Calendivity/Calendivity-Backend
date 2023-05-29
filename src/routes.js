@@ -1,5 +1,5 @@
 const {authHandler} = require('./handler/authHandler');
-const {userInfoHandler} = require('./handler/userHandler');
+const {userLoginHandler, userInfoHandler} = require('./handler/userHandler');
 const {
   getPersonalEventsHandler,
   getGroupEventsHandler,
@@ -8,15 +8,13 @@ const {
 const routes = [
   {
     method: 'GET',
-    path: '/',
-    handler: (request, h) => {
-      return 'Hello World!';
-    },
-  },
-  {
-    method: 'GET',
     path: '/auth',
     handler: authHandler,
+  },
+  {
+    method: 'POST',
+    path: '/login',
+    handler: userLoginHandler,
   },
   {
     method: 'GET',
