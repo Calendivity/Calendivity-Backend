@@ -1,5 +1,6 @@
 const {authHandler} = require('./handler/authHandler');
 const {userLoginHandler, userInfoHandler} = require('./handler/userHandler');
+const {createGroupHandler} = require('./handler/groupHandler');
 const {
   getPersonalEventsHandler,
   getGroupEventsHandler,
@@ -25,6 +26,11 @@ const routes = [
     method: 'GET',
     path: '/users/{calendarId}/events',
     handler: getPersonalEventsHandler,
+  },
+  {
+    method: 'POST',
+    path: '/groups/create',
+    handler: createGroupHandler,
   },
   {
     method: 'GET',
