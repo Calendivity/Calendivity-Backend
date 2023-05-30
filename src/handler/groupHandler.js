@@ -20,9 +20,6 @@ const createGroupHandler = async (request, h) => {
       if (!userRes.exists) {
         unregisteredUser.push(user);
       }
-      if (index === users.length - 1) {
-        console.log('last');
-      }
     }),
   );
   if (unregisteredUser.length > 0) {

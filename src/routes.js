@@ -1,3 +1,4 @@
+const {verifyGoogle} = require('./middleware');
 const {authHandler} = require('./handler/authHandler');
 const {userLoginHandler, userInfoHandler} = require('./handler/userHandler');
 const {createGroupHandler} = require('./handler/groupHandler');
@@ -30,7 +31,10 @@ const routes = [
   {
     method: 'POST',
     path: '/groups/create',
-    handler: createGroupHandler,
+    options: {
+      pre: [{method: verifyGoogle, assign: 'verifyGoogle'}],
+      handler: createGroupHandler,
+    },
   },
   {
     method: 'GET',
