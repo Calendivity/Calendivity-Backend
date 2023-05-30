@@ -4,6 +4,7 @@ const {userLoginHandler, userInfoHandler} = require('./handler/userHandler');
 const {
   createGroupHandler,
   inviteToGroupHandler,
+  removeFromGroup,
 } = require('./handler/groupHandler');
 const {
   getPersonalEventsHandler,
@@ -36,7 +37,7 @@ const routes = [
   },
   {
     method: 'POST',
-    path: '/groups/create',
+    path: '/groups',
     options: {
       pre: [{method: verifyGoogle}],
       handler: createGroupHandler,
@@ -44,10 +45,18 @@ const routes = [
   },
   {
     method: 'POST',
-    path: '/groups/{groupId}/invites',
+    path: '/groups/{groupId}/users',
     options: {
       pre: [{method: verifyGoogle}],
       handler: inviteToGroupHandler,
+    },
+  },
+  {
+    method: 'DELETE',
+    path: '/groups/{groupId}/users',
+    options: {
+      pre: [{method: verifyGoogle}],
+      handler: removeFromGroup,
     },
   },
   {

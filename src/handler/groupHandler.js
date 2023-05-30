@@ -75,7 +75,7 @@ const inviteToGroupHandler = async (request, h) => {
     .get();
   if (adminSnapshot.empty) {
     const response = h.response({
-      message: `you are not an admin of ${groupName} group`,
+      message: `you are not an admin of ${groupId} group`,
     });
     response.code(400);
     return response;
@@ -129,4 +129,46 @@ const inviteToGroupHandler = async (request, h) => {
   return response;
 };
 
-module.exports = {createGroupHandler, inviteToGroupHandler};
+const removeFromGroup = async (request, h) => {
+  const adminId = request.authUser.email;
+  const {groupId} = request.params;
+  const {user} = request.payload;
+
+  // check the remover should be an admin
+  const membershipRef = await db.collection('memberships');
+  const adminSnapshot = await membershipRef
+    .where('role', '==', 'admin')
+    .where('userId', '==', adminId)
+    .where('groupId', '==', groupId)
+    .get();
+  if (adminSnapshot.empty) {
+    const response = h.response({
+      message: `you are not an admin of ${groupId} group`,
+    });
+    response.code(400);
+    return response;
+  }
+
+  const userSnapshot = await membershipRef
+    .where('userId', '==', user)
+    .where('groupId', '==', groupId)
+    .get();
+  // check is the user exists in the group
+  if (userSnapshot.empty) {
+    const response = h.response({
+      message: `user ${user} not exists in ${groupId} group`,
+    });
+    response.code(400);
+    return response;
+  }
+  userSnapshot.forEach((doc) => {
+    membershipRef.doc(doc.id).delete();
+  });
+  const response = h.response({
+    message: `user ${user} successfully removed from ${groupId} group`,
+  });
+  response.code(200);
+  return response;
+};
+
+module.exports = {createGroupHandler, inviteToGroupHandler, removeFromGroup};
