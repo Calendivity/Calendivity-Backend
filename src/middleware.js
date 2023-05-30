@@ -9,6 +9,7 @@ const verifyGoogle = async (request, h) => {
   return axios
     .get('https://www.googleapis.com/userinfo/v2/me', config)
     .then((res) => {
+      request.authUser = res.data;
       return h.continue;
     })
     .catch((err) => {

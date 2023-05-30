@@ -1,18 +1,10 @@
 const {db} = require('../../firestore');
 const axios = require('axios');
+const Boom = require('@hapi/boom');
 
 const getPersonalEventsHandler = (request, h) => {
-  // get authorization header
-  const {headers} = request;
-  if (!headers.authorization) {
-    const response = h.response({
-      message: 'unauthorized access',
-    });
-    response.code(401);
-    return response;
-  }
   const config = {
-    headers: {Authorization: headers.authorization},
+    headers: {Authorization: request.headers.authorization},
   };
 
   // make string query for axios
@@ -34,26 +26,13 @@ const getPersonalEventsHandler = (request, h) => {
       return response;
     })
     .catch((err) => {
-      const response = h.response({
-        message: err.message,
-      });
-      response.code(500);
-      return response;
+      throw Boom.internal(err.message);
     });
 };
 
 const getGroupEventsHandler = async (request, h) => {
-  // get authorization header
-  const {headers} = request;
-  if (!headers.authorization) {
-    const response = h.response({
-      message: 'unauthorized access',
-    });
-    response.code(401);
-    return response;
-  }
   const config = {
-    headers: {Authorization: headers.authorization},
+    headers: {Authorization: request.headers.authorization},
   };
 
   // get users from membership firestore collection based on groupId

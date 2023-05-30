@@ -1,19 +1,11 @@
 const {db} = require('../../firestore');
 const axios = require('axios');
+const Boom = require('@hapi/boom');
 const {GeoPoint} = require('@google-cloud/firestore');
 
 const userLoginHandler = async (request, h) => {
-  // get authorization header
-  const {headers} = request;
-  if (!headers.authorization) {
-    const response = h.response({
-      message: 'unauthorized access',
-    });
-    response.code(401);
-    return response;
-  }
   const config = {
-    headers: {Authorization: headers.authorization},
+    headers: {Authorization: request.headers.authorization},
   };
 
   // call google userinfo api
@@ -43,26 +35,16 @@ const userLoginHandler = async (request, h) => {
       return response;
     })
     .catch((err) => {
-      const response = h.response({
-        message: err.message,
-      });
-      response.code(500);
-      return response;
+      if (err.response.status === 401) {
+        throw Boom.unauthorized('unauthorized');
+      }
+      throw Boom.internal(err.message);
     });
 };
 
 const userInfoHandler = (request, h) => {
-  // get authorization header
-  const {headers} = request;
-  if (!headers.authorization) {
-    const response = h.response({
-      message: 'unauthorized access',
-    });
-    response.code(401);
-    return response;
-  }
   const config = {
-    headers: {Authorization: headers.authorization},
+    headers: {Authorization: request.headers.authorization},
   };
 
   // call google userinfo api
@@ -73,11 +55,10 @@ const userInfoHandler = (request, h) => {
       return response;
     })
     .catch((err) => {
-      const response = h.response({
-        message: err.message,
-      });
-      response.code(500);
-      return response;
+      if (err.response.status === 401) {
+        throw Boom.unauthorized('unauthorized');
+      }
+      throw Boom.internal(err.message);
     });
 };
 

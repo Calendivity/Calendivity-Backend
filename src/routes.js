@@ -26,20 +26,26 @@ const routes = [
   {
     method: 'GET',
     path: '/users/{calendarId}/events',
-    handler: getPersonalEventsHandler,
+    options: {
+      pre: [{method: verifyGoogle}],
+      handler: getPersonalEventsHandler,
+    },
   },
   {
     method: 'POST',
     path: '/groups/create',
     options: {
-      pre: [{method: verifyGoogle, assign: 'verifyGoogle'}],
+      pre: [{method: verifyGoogle}],
       handler: createGroupHandler,
     },
   },
   {
     method: 'GET',
     path: '/groups/{groupId}/events',
-    handler: getGroupEventsHandler,
+    options: {
+      pre: [{method: verifyGoogle}],
+      handler: getGroupEventsHandler,
+    },
   },
 ];
 

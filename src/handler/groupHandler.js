@@ -53,6 +53,8 @@ const createGroupHandler = async (request, h) => {
   });
   const response = h.response({
     message: `group ${groupName} successfully created`,
+    groupId: groupRes.id,
+    groupName: groupName,
   });
   response.code(201);
   return response;
