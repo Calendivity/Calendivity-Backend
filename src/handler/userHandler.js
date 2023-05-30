@@ -12,16 +12,14 @@ const userLoginHandler = async (request, h) => {
   return axios
     .get('https://www.googleapis.com/userinfo/v2/me', config)
     .then(async (res) => {
-      const {email} = request.payload;
-
+      const userInfo = res.data;
       // get user data from firestore
       const userRef = await db.collection('users');
-      const user = await userRef.doc(email).get();
+      const user = await userRef.doc(userInfo.email).get();
 
       // if user data doesn't exists in firestore, it will create new record for new user
       if (!user.exists) {
-        const userInfo = res.data;
-        await userRef.doc(email).set({
+        await userRef.doc(userInfo.email).set({
           calendarId: userInfo.email,
           email: userInfo.email,
           name: userInfo.name,

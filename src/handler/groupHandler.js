@@ -15,7 +15,7 @@ const createGroupHandler = async (request, h) => {
   // check all users should be registered
   const unregisteredUser = [];
   await Promise.all(
-    users.map(async (user, index) => {
+    users.map(async (user) => {
       const userRes = await db.collection('users').doc(user).get();
       if (!userRes.exists) {
         unregisteredUser.push(user);
@@ -41,10 +41,11 @@ const createGroupHandler = async (request, h) => {
     groupId: groupRes.id,
   });
   // add registered users to new group
+  users.push(request.authUser.email);
   users.map(async (user, index) => {
     const membershipRes = await db.collection('memberships').add({
       groupId: groupRes.id,
-      role: index === 0 ? 'admin' : 'member',
+      role: index === users.length - 1 ? 'admin' : 'member',
       userId: user,
     });
     db.collection('memberships').doc(membershipRes.id).update({
@@ -60,4 +61,72 @@ const createGroupHandler = async (request, h) => {
   return response;
 };
 
-module.exports = {createGroupHandler};
+const inviteToGroupHandler = async (request, h) => {
+  const adminId = request.authUser.email;
+  const {groupId} = request.params;
+  const {users} = request.payload;
+
+  // check the inviter should be an admin
+  const membershipRef = await db.collection('memberships');
+  const adminSnapshot = await membershipRef
+    .where('role', '==', 'admin')
+    .where('userId', '==', adminId)
+    .where('groupId', '==', groupId)
+    .get();
+  if (adminSnapshot.empty) {
+    const response = h.response({
+      message: `you are not an admin of ${groupName} group`,
+    });
+    response.code(400);
+    return response;
+  }
+
+  // check all users should be registered
+  const unregisteredUser = [];
+  await Promise.all(
+    users.map(async (user) => {
+      const userRes = await db.collection('users').doc(user).get();
+      if (!userRes.exists) {
+        unregisteredUser.push(user);
+      }
+    }),
+  );
+  if (unregisteredUser.length > 0) {
+    const response = h.response({
+      message: 'all invited users should be registered',
+      unregisteredUser: unregisteredUser,
+    });
+    response.code(400);
+    return response;
+  }
+
+  const newUsers = [];
+  await Promise.all(
+    users.map(async (user) => {
+      const userSnapshot = await membershipRef
+        .where('userId', '==', user)
+        .where('groupId', '==', groupId)
+        .get();
+      // check if the new user not in the group
+      if (userSnapshot.empty) {
+        newUsers.push(user);
+        const membershipRes = await membershipRef.add({
+          groupId: groupId,
+          role: 'member',
+          userId: user,
+        });
+        db.collection('memberships').doc(membershipRes.id).update({
+          membershipId: membershipRes.id,
+        });
+      }
+    }),
+  );
+  const response = h.response({
+    message: 'all invited users are successfully added to the group',
+    newUsers: newUsers,
+  });
+  response.code(201);
+  return response;
+};
+
+module.exports = {createGroupHandler, inviteToGroupHandler};
