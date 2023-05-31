@@ -10,6 +10,7 @@ const {
   getPersonalEventsHandler,
   getGroupEventsHandler,
 } = require('./handler/calendarHandler');
+const {getPlacesByGroupMembersPositionHandler} = require('./handler/placeHandler');
 
 const routes = [
   {
@@ -65,6 +66,14 @@ const routes = [
     options: {
       pre: [{method: verifyGoogle}],
       handler: getGroupEventsHandler,
+    },
+  },
+  {
+    method: 'GET',
+    path: '/groups/{groupId}/places',
+    options: {
+      pre: [{method: verifyGoogle}],
+      handler: getPlacesByGroupMembersPositionHandler,
     },
   },
 ];
