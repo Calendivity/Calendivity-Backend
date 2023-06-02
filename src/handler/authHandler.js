@@ -1,29 +1,41 @@
-const path = require('path');
-const {authenticate} = require('@google-cloud/local-auth');
+const {google} = require('googleapis');
 
-const SCOPES = [
-  'openid',
-  'https://www.googleapis.com/auth/userinfo.email',
-  'https://www.googleapis.com/auth/userinfo.profile',
-  'https://www.googleapis.com/auth/calendar',
-];
-const CREDENTIALS_PATH = path.join(process.cwd(), 'credentials.json');
 const authorize = async () => {
-  const client = await authenticate({
-    scopes: SCOPES,
-    keyfilePath: CREDENTIALS_PATH,
-  });
-  return client;
+  const oauth2Client = new google.auth.OAuth2(
+    process.env.CLIENT_ID,
+    process.env.CLIENT_SECRET,
+    process.env.REDIRECT_URI,
+  );
+  return oauth2Client;
 };
 
 const authHandler = async (request, h) => {
-  try {
-    const auth = await authorize();
+  const {code} = request.query;
+  if (code === undefined) {
     const response = h.response({
-      access_token: auth.credentials.access_token,
+      message: 'missing query parameter: code',
+    });
+    response.code(400);
+    return response;
+  }
+
+  try {
+    const oauth2Client = await authorize();
+    const {tokens} = await oauth2Client.getToken(code);
+    const response = h.response({
+      tokens,
     });
     return response;
   } catch (err) {
+    if (err.response.status !== 500) {
+      const response = h.response({
+        message: err.response.statusText,
+        ...err.response.data,
+      });
+      response.code(err.response.status);
+      return response;
+    }
+
     const response = h.response({
       message: err.message,
     });

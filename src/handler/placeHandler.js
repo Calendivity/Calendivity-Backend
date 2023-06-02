@@ -55,7 +55,7 @@ const getPlacesByGroupMembersPositionHandler = async (request, h) => {
 
     // Execute axios and return user events array
     const response = await axios.get(
-      `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${midpointLatitude}%2C${midpointLongitude}&radius=${radius}&keyword=${keyword}&key=${process.env.API_KEY}`,
+      `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${midpointLatitude}%2C${midpointLongitude}&radius=${radius}&keyword=${keyword}&key=${process.env.MAPS_API_KEY}`,
     );
     return h.response(response.data.results);
   } catch (error) {
