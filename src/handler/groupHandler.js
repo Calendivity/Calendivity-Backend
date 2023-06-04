@@ -171,4 +171,38 @@ const removeFromGroup = async (request, h) => {
   return response;
 };
 
-module.exports = {createGroupHandler, inviteToGroupHandler, removeFromGroup};
+const listNameInGroup = async (request, h) => {
+  const {groupId} = request.params;
+
+  // Get user with group ID's parameter from Membership
+  const groupsRef = await db.collection('memberships');
+  const snapshotGroup = await groupsRef.where('groupId', '==', groupId).get();
+
+  const users = [];
+  snapshotGroup.forEach((doc) => {
+    users.push(doc.data().userId);
+  });
+
+  // Get data from database collection users
+  const getDataUsers = [];
+  await Promise.all(
+    users.map(async (userId) => {
+      const userRes = await db.collection('users').doc(userId).get();
+      getDataUsers.push(userRes.data());
+    }),
+  );
+
+  const userNameEmail = getDataUsers.map((data) => {
+    return {
+      Name: data.name,
+      Email: data.email,
+    };
+  });
+
+  const response = h.response({
+    message: `This Group have ${getDataUsers.length} members:`,
+    list: userNameEmail,
+  });
+  return response;
+};
+module.exports = {createGroupHandler, inviteToGroupHandler, removeFromGroup, listNameInGroup};

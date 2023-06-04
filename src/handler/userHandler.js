@@ -60,4 +60,32 @@ const userInfoHandler = (request, h) => {
     });
 };
 
-module.exports = {userInfoHandler, userLoginHandler};
+const groupsHaveXUser = async (request, h) => {
+  const {userId} = request.params;
+
+  // Get Groups that have User Id
+  const userRef = await db.collection('memberships');
+  const snapshotUser = await userRef.where('userId', '==', userId).get();
+
+  const groupsId = [];
+  snapshotUser.forEach((doc) => {
+    groupsId.push(doc.data().groupId);
+  });
+
+  // Get data from database collection groups
+  const getDataGroup = [];
+  await Promise.all(
+    groupsId.map(async (groupId) => {
+      const userRes = await db.collection('groups').doc(groupId).get();
+      getDataGroup.push(userRes.data());
+    }),
+  );
+
+  const response = h.response({
+    message: `This Users have ${getDataGroup.length} Groups:`,
+    DataGroup: getDataGroup,
+  });
+  return response;
+};
+
+module.exports = {userInfoHandler, userLoginHandler, groupsHaveXUser};
