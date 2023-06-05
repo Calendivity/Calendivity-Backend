@@ -17,7 +17,13 @@ const {
 const {
   getPlacesByGroupMembersPositionHandler,
 } = require('./handler/placeHandler');
-const {createGroupActivityHandler} = require('./handler/groupActivityHandler');
+const {
+  createGroupActivityHandler,
+  getAllGroupActivitiesHandler,
+  getGroupActivityHandler,
+  updateGroupActivityHandler,
+  deleteGroupActivityHandler,
+} = require('./handler/groupActivityHandler');
 
 const routes = [
   {
@@ -105,6 +111,38 @@ const routes = [
     options: {
       pre: [{method: verifyGoogle}],
       handler: createGroupActivityHandler,
+    },
+  },
+  {
+    method: 'GET',
+    path: '/groups/{groupId}/avtivities',
+    options: {
+      pre: [{method: verifyGoogle}],
+      handler: getAllGroupActivitiesHandler,
+    },
+  },
+  {
+    method: 'GET',
+    path: '/groups/{groupId}/avtivities/{activityId}',
+    options: {
+      pre: [{method: verifyGoogle}],
+      handler: getGroupActivityHandler,
+    },
+  },
+  {
+    method: 'PUT',
+    path: '/groups/{groupId}/avtivities/{activityId}',
+    options: {
+      pre: [{method: verifyGoogle}],
+      handler: updateGroupActivityHandler,
+    },
+  },
+  {
+    method: 'DELETE',
+    path: '/groups/{groupId}/avtivities/{activityId}',
+    options: {
+      pre: [{method: verifyGoogle}],
+      handler: deleteGroupActivityHandler,
     },
   },
 ];
