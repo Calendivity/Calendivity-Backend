@@ -52,7 +52,7 @@ const authHandler = async (request, h) => {
     }
 
     const response = h.response({
-      tokens,
+      ...tokens,
     });
     return response;
   } catch (err) {
