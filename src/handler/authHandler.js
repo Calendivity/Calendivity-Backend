@@ -64,7 +64,7 @@ const authHandler = async (request, h) => {
   }
 };
 
-const tokenRefresh = async (request, h) => {
+const tokenRefreshHandler = async (request, h) => {
   if (!request.payload) {
     throw Boom.badRequest('bad request');
   }
@@ -89,4 +89,4 @@ const tokenRefresh = async (request, h) => {
   }
 };
 
-module.exports = {authHandler, tokenRefresh};
+module.exports = {authHandler, tokenRefreshHandler};

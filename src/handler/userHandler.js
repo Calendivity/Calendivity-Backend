@@ -22,8 +22,8 @@ const userInfoHandler = (request, h) => {
     });
 };
 
-const groupsHaveXUser = async (request, h) => {
-  const {userId} = request.params;
+const getUserGroupsHandler = async (request, h) => {
+  const userId = request.authUser.email;
 
   // Get Groups that have User Id
   const userRef = await db.collection('memberships');
@@ -44,10 +44,10 @@ const groupsHaveXUser = async (request, h) => {
   );
 
   const response = h.response({
-    message: `This Users have ${getDataGroup.length} Groups:`,
-    DataGroup: getDataGroup,
+    message: `This User have ${getDataGroup.length} Groups:`,
+    data: getDataGroup,
   });
   return response;
 };
 
-module.exports = {userInfoHandler, groupsHaveXUser};
+module.exports = {userInfoHandler, getUserGroupsHandler};

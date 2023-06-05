@@ -1,11 +1,14 @@
 const {verifyGoogle} = require('./middleware');
-const {authHandler, tokenRefresh} = require('./handler/authHandler');
-const {userInfoHandler, groupsHaveXUser} = require('./handler/userHandler');
+const {authHandler, tokenRefreshHandler} = require('./handler/authHandler');
+const {
+  userInfoHandler,
+  getUserGroupsHandler,
+} = require('./handler/userHandler');
 const {
   createGroupHandler,
   inviteToGroupHandler,
-  removeFromGroup,
-  listNameInGroup,
+  removeFromGroupHandler,
+  getGroupUsersHandler,
 } = require('./handler/groupHandler');
 const {
   getPersonalEventsHandler,
@@ -24,7 +27,7 @@ const routes = [
   {
     method: 'POST',
     path: '/tokenrefresh',
-    handler: tokenRefresh,
+    handler: tokenRefreshHandler,
   },
   {
     method: 'GET',
@@ -33,7 +36,7 @@ const routes = [
   },
   {
     method: 'GET',
-    path: '/users/{calendarId}/events',
+    path: '/users/events',
     options: {
       pre: [{method: verifyGoogle}],
       handler: getPersonalEventsHandler,
@@ -41,10 +44,10 @@ const routes = [
   },
   {
     method: 'GET',
-    path: '/users/{userId}/groups',
+    path: '/users/groups',
     options: {
       pre: [{method: verifyGoogle}],
-      handler: groupsHaveXUser,
+      handler: getUserGroupsHandler,
     },
   },
   {
@@ -68,7 +71,7 @@ const routes = [
     path: '/groups/{groupId}/users',
     options: {
       pre: [{method: verifyGoogle}],
-      handler: removeFromGroup,
+      handler: removeFromGroupHandler,
     },
   },
   {
@@ -92,7 +95,7 @@ const routes = [
     path: '/groups/{groupId}/users',
     options: {
       pre: [{method: verifyGoogle}],
-      handler: listNameInGroup,
+      handler: getGroupUsersHandler,
     },
   },
 ];

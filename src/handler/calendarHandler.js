@@ -9,11 +9,11 @@ const getPersonalEventsHandler = (request, h) => {
 
   // make string query for axios
   const dateMin = new Date().toISOString();
-  let query = `dateMin=${dateMin}`;
+  let query = `timeMin=${dateMin}&orderBy=startTime&singleEvents=true`;
   for (const q in request.query) {
     query += '&' + q + '=' + request.query[q];
   }
-  const {calendarId} = request.params;
+  const calendarId = request.authUser.email;
 
   // execute axios and return user events array
   return axios
@@ -47,7 +47,7 @@ const getGroupEventsHandler = async (request, h) => {
 
   // make string query for axios
   const dateMin = new Date().toISOString();
-  let query = `dateMin=${dateMin}`;
+  let query = `timeMin=${dateMin}&orderBy=startTime&singleEvents=true`;
   for (const q in request.query) {
     query += '&' + q + '=' + request.query[q];
   }
@@ -69,7 +69,7 @@ const getGroupEventsHandler = async (request, h) => {
         response.data.items.forEach((item) => {
           userEvents.push({
             user: summary,
-            event: item,
+            ...item,
           });
         });
       });

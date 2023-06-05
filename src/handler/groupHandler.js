@@ -129,7 +129,7 @@ const inviteToGroupHandler = async (request, h) => {
   return response;
 };
 
-const removeFromGroup = async (request, h) => {
+const removeFromGroupHandler = async (request, h) => {
   const adminId = request.authUser.email;
   const {groupId} = request.params;
   const {user} = request.payload;
@@ -171,7 +171,7 @@ const removeFromGroup = async (request, h) => {
   return response;
 };
 
-const listNameInGroup = async (request, h) => {
+const getGroupUsersHandler = async (request, h) => {
   const {groupId} = request.params;
 
   // Get user with group ID's parameter from Membership
@@ -194,15 +194,20 @@ const listNameInGroup = async (request, h) => {
 
   const userNameEmail = getDataUsers.map((data) => {
     return {
-      Name: data.name,
-      Email: data.email,
+      name: data.name,
+      email: data.email,
     };
   });
 
   const response = h.response({
     message: `This Group have ${getDataUsers.length} members:`,
-    list: userNameEmail,
+    data: userNameEmail,
   });
   return response;
 };
-module.exports = {createGroupHandler, inviteToGroupHandler, removeFromGroup, listNameInGroup};
+module.exports = {
+  createGroupHandler,
+  inviteToGroupHandler,
+  removeFromGroupHandler,
+  getGroupUsersHandler,
+};
