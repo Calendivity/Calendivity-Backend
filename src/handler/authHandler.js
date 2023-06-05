@@ -77,12 +77,20 @@ const tokenRefreshHandler = async (request, h) => {
     return {access_token: accessToken};
   } catch (err) {
     if (err.response.status === 400) {
-      const oauth2Client = await authorize();
-      const {tokens} = await oauth2Client.refreshToken(refreshToken);
-      return {access_token: tokens.access_token};
+      try {
+        const oauth2Client = await authorize();
+        const {tokens} = await oauth2Client.refreshToken(refreshToken);
+        return {access_token: tokens.access_token};
+      } catch (err) {
+        const response = h.response({
+          message: err.response.data.error_description,
+        });
+        response.code(err.response.status);
+        return response;
+      }
     }
     const response = h.response({
-      message: err.message,
+      message: err.response.data,
     });
     response.code(500);
     return response;
