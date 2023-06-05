@@ -1,6 +1,6 @@
 const {verifyGoogle} = require('./middleware');
-const {authHandler} = require('./handler/authHandler');
-const {userLoginHandler, userInfoHandler, groupsHaveXUser} = require('./handler/userHandler');
+const {authHandler, tokenRefresh} = require('./handler/authHandler');
+const {userInfoHandler, groupsHaveXUser} = require('./handler/userHandler');
 const {
   createGroupHandler,
   inviteToGroupHandler,
@@ -11,7 +11,9 @@ const {
   getPersonalEventsHandler,
   getGroupEventsHandler,
 } = require('./handler/calendarHandler');
-const {getPlacesByGroupMembersPositionHandler} = require('./handler/placeHandler');
+const {
+  getPlacesByGroupMembersPositionHandler,
+} = require('./handler/placeHandler');
 
 const routes = [
   {
@@ -21,8 +23,8 @@ const routes = [
   },
   {
     method: 'POST',
-    path: '/login',
-    handler: userLoginHandler,
+    path: '/tokenrefresh',
+    handler: tokenRefresh,
   },
   {
     method: 'GET',
@@ -35,6 +37,14 @@ const routes = [
     options: {
       pre: [{method: verifyGoogle}],
       handler: getPersonalEventsHandler,
+    },
+  },
+  {
+    method: 'GET',
+    path: '/users/{userId}/groups',
+    options: {
+      pre: [{method: verifyGoogle}],
+      handler: groupsHaveXUser,
     },
   },
   {
@@ -83,14 +93,6 @@ const routes = [
     options: {
       pre: [{method: verifyGoogle}],
       handler: listNameInGroup,
-    },
-  },
-  {
-    method: 'GET',
-    path: '/users/{userId}/groups',
-    options: {
-      pre: [{method: verifyGoogle}],
-      handler: groupsHaveXUser,
     },
   },
 ];
