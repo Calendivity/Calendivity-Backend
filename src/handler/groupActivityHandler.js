@@ -27,7 +27,7 @@ const createGroupActivityHandler = async (request, h) => {
       const response = h.response({
         message: `group ${groupId} does not exist`,
       });
-      response.code(400);
+      response.code(404);
       return response;
     }
 
@@ -69,7 +69,7 @@ const getAllGroupActivitiesHandler = async (request, h) => {
       const response = h.response({
         message: `group ${groupId} does not exist`,
       });
-      response.code(400);
+      response.code(404);
       return response;
     }
 
@@ -125,7 +125,11 @@ const getAllGroupActivitiesHandler = async (request, h) => {
   }
 };
 
+<<<<<<< HEAD
 const getGroupActivityHandler = async (request, h) => {
+=======
+const getAGroupActivityHandler = async (request, h) => {
+>>>>>>> 86ce45a (add/get a group activity handler)
   try {
     const {groupId, activityId} = request.params;
 

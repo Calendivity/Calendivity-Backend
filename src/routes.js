@@ -145,6 +145,14 @@ const routes = [
       handler: deleteGroupActivityHandler,
     },
   },
+  {
+    method: 'GET',
+    path: '/groups/{groupId}/avtivities/{activityId}',
+    options: {
+      pre: [{method: verifyGoogle}],
+      handler: getAGroupActivityHandler,
+    },
+  },
 ];
 
 module.exports = routes;
