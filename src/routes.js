@@ -41,6 +41,7 @@ const {
 const {
   createUserChallenge,
   getAllUserChallengeHandler,
+  getUserChallengeHandler,
 } = require('./handler/userChallengeHandler');
 
 const routes = [
@@ -264,6 +265,14 @@ const routes = [
     options: {
       pre: [{method: verifyGoogle}],
       handler: getAllUserChallengeHandler,
+    },
+  },
+  {
+    method: 'GET',
+    path: '/users/challenges/{userChallengeId}',
+    options: {
+      pre: [{method: verifyGoogle}],
+      handler: getUserChallengeHandler,
     },
   },
 ];

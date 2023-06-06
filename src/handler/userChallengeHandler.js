@@ -80,4 +80,40 @@ const getAllUserChallengeHandler = async (request, h) => {
   }
 };
 
-module.exports = {createUserChallenge, getAllUserChallengeHandler};
+const getUserChallengeHandler = async (request, h) => {
+  try {
+    const {userChallengeId} = request.params;
+
+    // get a user challenge from userChellenges collection by userChallengeId
+    const userChallengesRef = await db.collection('userChallenges');
+    const userChallenge = await userChallengesRef.doc(userChallengeId).get();
+
+    // check if user challenge exists
+    if (!userChallenge.exists) {
+      const response = h.response({
+        message: 'user challenge not found',
+      });
+      response.code(404);
+      return response;
+    }
+
+    const response = h.response({
+      message: 'oke',
+      data: userChallenge.data(),
+    });
+    response.code(200);
+    return response;
+  } catch (err) {
+    const response = h.response({
+      message: err.message,
+    });
+    response.code(500);
+    return response;
+  }
+};
+
+module.exports = {
+  createUserChallenge,
+  getAllUserChallengeHandler,
+  getUserChallengeHandler,
+};
