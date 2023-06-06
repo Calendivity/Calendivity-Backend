@@ -17,7 +17,7 @@ const {
 const {
   getPlacesByGroupMembersPositionHandler,
 } = require('./handler/placeHandler');
-
+const {createUserActivityHandler, getUserActivityHandler} = require('./handler/userActivityHandler');
 const routes = [
   {
     method: 'GET',
@@ -96,6 +96,22 @@ const routes = [
     options: {
       pre: [{method: verifyGoogle}],
       handler: getGroupUsersHandler,
+    },
+  },
+  {
+    method: 'POST',
+    path: '/users/activities',
+    options: {
+      pre: [{method: verifyGoogle}],
+      handler: createUserActivityHandler,
+    },
+  },
+  {
+    method: 'GET',
+    path: '/users/{activityId}/activities',
+    options: {
+      pre: [{method: verifyGoogle}],
+      handler: getUserActivityHandler,
     },
   },
 ];
