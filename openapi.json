@@ -21,6 +21,9 @@
     },
     {
       "name": "group activities"
+    },
+    {
+      "name": "challenges"
     }
   ],
   "paths": {
@@ -564,7 +567,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/Avtivity"
+                    "$ref": "#/components/schemas/Activity"
                   }
                 }
               }
@@ -609,7 +612,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Avtivity"
+                  "$ref": "#/components/schemas/Activity"
                 }
               }
             }
@@ -727,6 +730,204 @@
           }
         ]
       }
+    },
+    "/challenges": {
+      "post": {
+        "tags": ["challenges"],
+        "summary": "Create challenges",
+        "description": "Create challenges",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "challengeName": {"type": "string"},
+                  "description": {"type": "string"},
+                  "goals": {"type": "number"},
+                  "startTime": {"type": "string"},
+                  "endTime": {"type": "string"}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {"type": "string"},
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "challengeId": {"type": "string"}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "get": {
+        "tags": ["challenges"],
+        "summary": "Get all challenges",
+        "description": "Get all challenges",
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Challenge"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/challenges/{challengeId}": {
+      "get": {
+        "tags": ["challenges"],
+        "summary": "Get challenges",
+        "description": "Get challenges",
+        "parameters": [
+          {
+            "name": "challengeId",
+            "in": "path",
+            "description": "Challenge id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Challenge"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": ["challenges"],
+        "summary": "Update challenges",
+        "description": "Update challenges",
+        "parameters": [
+          {
+            "name": "challengeId",
+            "in": "path",
+            "description": "Challenge id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "challengeName": {"type": "string"},
+                  "description": {"type": "string"},
+                  "goals": {"type": "number"},
+                  "points": {"type": "number"},
+                  "startTime": {"type": "string"},
+                  "endTime": {"type": "string"}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {"type": "string"}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": ["challenges"],
+        "summary": "Delete challenges",
+        "description": "Delete challenges",
+        "parameters": [
+          {
+            "name": "challengeId",
+            "in": "path",
+            "description": "Challenge id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {"type": "string"}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
     }
   },
   "components": {
@@ -780,7 +981,7 @@
           "vicinity": {"type": "string"}
         }
       },
-      "Avtivity": {
+      "Activity": {
         "type": "object",
         "properties": {
           "activityId": {"type": "string"},
@@ -789,6 +990,18 @@
           "endTime": {"type": "string"},
           "finishTime": {"type": "string"},
           "isFinish": {"type": "boolean"}
+        }
+      },
+      "Challenge": {
+        "type": "object",
+        "properties": {
+          "challengeId": {"type": "string"},
+          "challengeName": {"type": "string"},
+          "description": {"type": "string"},
+          "goals": {"type": "number"},
+          "points": {"type": "number"},
+          "startTime": {"type": "string"},
+          "endTime": {"type": "string"}
         }
       }
     },
