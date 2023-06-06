@@ -95,4 +95,42 @@ const getAllChallengesHandler = async (request, h) => {
   }
 };
 
-module.exports = {createChallengeHandler, getAllChallengesHandler};
+const getChallengeHandler = async (request, h) => {
+  try {
+    const {challengeId} = request.params;
+
+    const challengesRef = await db.collection('challenges');
+    const challenge = await challengesRef.doc(challengeId).get();
+
+    if (!challenge.exists) {
+      const response = h.response({
+        message: 'challenge not found',
+      });
+      response.code(404);
+      return response;
+    }
+
+    const response = h.response({
+      message: 'oke',
+      data: {
+        ...challenge.data(),
+        startTime: new Date(challenge.data().startTime.seconds * 1000),
+        endTime: new Date(challenge.data().endTime.seconds * 1000),
+      },
+    });
+    response.code(200);
+    return response;
+  } catch (err) {
+    const response = h.response({
+      message: err.message,
+    });
+    response.code(500);
+    return response;
+  }
+};
+
+module.exports = {
+  createChallengeHandler,
+  getAllChallengesHandler,
+  getChallengeHandler,
+};

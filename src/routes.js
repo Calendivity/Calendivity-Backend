@@ -24,7 +24,11 @@ const {
   updateGroupActivityHandler,
   deleteGroupActivityHandler,
 } = require('./handler/groupActivityHandler');
-const {createChallengeHandler, getAllChallengesHandler} = require('./handler/challengeHandler');
+const {
+  createChallengeHandler,
+  getAllChallengesHandler,
+  getChallengeHandler,
+} = require('./handler/challengeHandler');
 
 const routes = [
   // auth
@@ -165,6 +169,14 @@ const routes = [
     options: {
       pre: [{method: verifyGoogle}],
       handler: getAllChallengesHandler,
+    },
+  },
+  {
+    method: 'GET',
+    path: '/challenges/{challengeId}',
+    options: {
+      pre: [{method: verifyGoogle}],
+      handler: getChallengeHandler,
     },
   },
 ];
