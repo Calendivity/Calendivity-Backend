@@ -132,7 +132,15 @@ const inviteToGroupHandler = async (request, h) => {
 const removeFromGroupHandler = async (request, h) => {
   const adminId = request.authUser.email;
   const {groupId} = request.params;
-  const {user} = request.payload;
+  const {userId} = request.query;
+
+  if (!userId) {
+    const response = h.response({
+      message: 'missing query: userId',
+    });
+    response.code(400);
+    return response;
+  }
 
   // check the remover should be an admin
   const membershipRef = await db.collection('memberships');
@@ -150,13 +158,13 @@ const removeFromGroupHandler = async (request, h) => {
   }
 
   const userSnapshot = await membershipRef
-    .where('userId', '==', user)
+    .where('userId', '==', userId)
     .where('groupId', '==', groupId)
     .get();
   // check is the user exists in the group
   if (userSnapshot.empty) {
     const response = h.response({
-      message: `user ${user} not exists in ${groupId} group`,
+      message: `user ${userId} not exists in ${groupId} group`,
     });
     response.code(400);
     return response;
@@ -165,7 +173,7 @@ const removeFromGroupHandler = async (request, h) => {
     membershipRef.doc(doc.id).delete();
   });
   const response = h.response({
-    message: `user ${user} successfully removed from ${groupId} group`,
+    message: `user ${userId} successfully removed from ${groupId} group`,
   });
   response.code(200);
   return response;

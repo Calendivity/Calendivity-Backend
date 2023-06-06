@@ -17,6 +17,13 @@ const {
 const {
   getPlacesByGroupMembersPositionHandler,
 } = require('./handler/placeHandler');
+const {
+  createGroupActivityHandler,
+  getAllGroupActivitiesHandler,
+  getGroupActivityHandler,
+  updateGroupActivityHandler,
+  deleteGroupActivityHandler,
+} = require('./handler/groupActivityHandler');
 const {createUserActivityHandler, getUserActivityHandler} = require('./handler/userActivityHandler');
 const routes = [
   {
@@ -67,6 +74,14 @@ const routes = [
     },
   },
   {
+    method: 'GET',
+    path: '/groups/{groupId}/users',
+    options: {
+      pre: [{method: verifyGoogle}],
+      handler: getGroupUsersHandler,
+    },
+  },
+  {
     method: 'DELETE',
     path: '/groups/{groupId}/users',
     options: {
@@ -91,11 +106,43 @@ const routes = [
     },
   },
   {
-    method: 'GET',
-    path: '/groups/{groupId}/users',
+    method: 'POST',
+    path: '/groups/{groupId}/avtivities',
     options: {
       pre: [{method: verifyGoogle}],
-      handler: getGroupUsersHandler,
+      handler: createGroupActivityHandler,
+    },
+  },
+  {
+    method: 'GET',
+    path: '/groups/{groupId}/avtivities',
+    options: {
+      pre: [{method: verifyGoogle}],
+      handler: getAllGroupActivitiesHandler,
+    },
+  },
+  {
+    method: 'GET',
+    path: '/groups/{groupId}/avtivities/{activityId}',
+    options: {
+      pre: [{method: verifyGoogle}],
+      handler: getGroupActivityHandler,
+    },
+  },
+  {
+    method: 'PUT',
+    path: '/groups/{groupId}/avtivities/{activityId}',
+    options: {
+      pre: [{method: verifyGoogle}],
+      handler: updateGroupActivityHandler,
+    },
+  },
+  {
+    method: 'DELETE',
+    path: '/groups/{groupId}/avtivities/{activityId}',
+    options: {
+      pre: [{method: verifyGoogle}],
+      handler: deleteGroupActivityHandler,
     },
   },
   {
