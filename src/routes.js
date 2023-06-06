@@ -207,7 +207,7 @@ const routes = [
   // user activity
   {
     method: 'POST',
-    path: '/users/{calendarId}/activities',
+    path: '/users/activities',
     options: {
       pre: [{method: verifyGoogle}],
       handler: createUserActivityHandler,
@@ -215,7 +215,7 @@ const routes = [
   },
   {
     method: 'GET',
-    path: '/users/{calendarId}/activities/{activityId}',
+    path: '/users/activities/{activityId}',
     options: {
       pre: [{method: verifyGoogle}],
       handler: getUserActivityHandler,
@@ -223,7 +223,7 @@ const routes = [
   },
   {
     method: 'GET',
-    path: '/users/{calendarId}/activities',
+    path: '/users/activities',
     options: {
       pre: [{method: verifyGoogle}],
       handler: getAllUserActivitiesHandler,
@@ -231,7 +231,7 @@ const routes = [
   },
   {
     method: 'PUT',
-    path: '/users/{calendarId}/activities/{activityId}',
+    path: '/users/activities/{activityId}',
     options: {
       pre: [{method: verifyGoogle}],
       handler: updateUserActivityHandler,
@@ -239,7 +239,7 @@ const routes = [
   },
   {
     method: 'DELETE',
-    path: '/users/{calendarId}/activities/{activityId}',
+    path: '/users/activities/{activityId}',
     options: {
       pre: [{method: verifyGoogle}],
       handler: deleteUserActivityHandler,
