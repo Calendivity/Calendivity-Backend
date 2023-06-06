@@ -153,6 +153,14 @@ const routes = [
       handler: getAGroupActivityHandler,
     },
   },
+  {
+    method: 'PUT',
+    path: '/groups/{groupId}/avtivities/{activityId}',
+    options: {
+      pre: [{method: verifyGoogle}],
+      handler: updateGroupActivityHandler,
+    },
+  },
 ];
 
 module.exports = routes;

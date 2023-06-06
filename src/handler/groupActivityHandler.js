@@ -4,7 +4,8 @@ const {Timestamp} = require('@google-cloud/firestore');
 const createGroupActivityHandler = async (request, h) => {
   try {
     const {groupId} = request.params;
-    const {activityName, startTime, endTime, finishTime, isFinish} = request.payload;
+    const {activityName, startTime, endTime, finishTime, isFinish} =
+      request.payload;
 
     // check request body paylaod
     if (
@@ -125,11 +126,7 @@ const getAllGroupActivitiesHandler = async (request, h) => {
   }
 };
 
-<<<<<<< HEAD
 const getGroupActivityHandler = async (request, h) => {
-=======
-const getAGroupActivityHandler = async (request, h) => {
->>>>>>> 86ce45a (add/get a group activity handler)
   try {
     const {groupId, activityId} = request.params;
 
