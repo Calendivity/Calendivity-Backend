@@ -24,7 +24,13 @@ const {
   updateGroupActivityHandler,
   deleteGroupActivityHandler,
 } = require('./handler/groupActivityHandler');
-const {createUserActivityHandler, getUserActivityHandler} = require('./handler/userActivityHandler');
+const {
+  createUserActivityHandler,
+  getUserActivityHandler,
+  getAllUserActivitiesHandler,
+  updateUserActivityHandler,
+  deleteUserActivityHandler,
+} = require('./handler/userActivityHandler');
 const routes = [
   {
     method: 'GET',
@@ -107,7 +113,7 @@ const routes = [
   },
   {
     method: 'POST',
-    path: '/groups/{groupId}/avtivities',
+    path: '/groups/{groupId}/activities',
     options: {
       pre: [{method: verifyGoogle}],
       handler: createGroupActivityHandler,
@@ -115,7 +121,7 @@ const routes = [
   },
   {
     method: 'GET',
-    path: '/groups/{groupId}/avtivities',
+    path: '/groups/{groupId}/activities',
     options: {
       pre: [{method: verifyGoogle}],
       handler: getAllGroupActivitiesHandler,
@@ -123,7 +129,7 @@ const routes = [
   },
   {
     method: 'GET',
-    path: '/groups/{groupId}/avtivities/{activityId}',
+    path: '/groups/{groupId}/activities/{activityId}',
     options: {
       pre: [{method: verifyGoogle}],
       handler: getGroupActivityHandler,
@@ -131,7 +137,7 @@ const routes = [
   },
   {
     method: 'PUT',
-    path: '/groups/{groupId}/avtivities/{activityId}',
+    path: '/groups/{groupId}/activities/{activityId}',
     options: {
       pre: [{method: verifyGoogle}],
       handler: updateGroupActivityHandler,
@@ -139,7 +145,7 @@ const routes = [
   },
   {
     method: 'DELETE',
-    path: '/groups/{groupId}/avtivities/{activityId}',
+    path: '/groups/{groupId}/activities/{activityId}',
     options: {
       pre: [{method: verifyGoogle}],
       handler: deleteGroupActivityHandler,
@@ -147,7 +153,7 @@ const routes = [
   },
   {
     method: 'POST',
-    path: '/users/activities',
+    path: '/users/{calendarId}/activities',
     options: {
       pre: [{method: verifyGoogle}],
       handler: createUserActivityHandler,
@@ -155,10 +161,34 @@ const routes = [
   },
   {
     method: 'GET',
-    path: '/users/{activityId}/activities',
+    path: '/users/{calendarId}/activities/{activityId}',
     options: {
       pre: [{method: verifyGoogle}],
       handler: getUserActivityHandler,
+    },
+  },
+  {
+    method: 'GET',
+    path: '/users/{calendarId}/activities',
+    options: {
+      pre: [{method: verifyGoogle}],
+      handler: getAllUserActivitiesHandler,
+    },
+  },
+  {
+    method: 'PUT',
+    path: '/users/{calendarId}/activities/{activityId}',
+    options: {
+      pre: [{method: verifyGoogle}],
+      handler: updateUserActivityHandler,
+    },
+  },
+  {
+    method: 'DELETE',
+    path: '/users/{calendarId}/activities/{activityId}',
+    options: {
+      pre: [{method: verifyGoogle}],
+      handler: deleteUserActivityHandler,
     },
   },
 ];
