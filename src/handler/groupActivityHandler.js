@@ -241,7 +241,7 @@ const updateGroupActivityHandler = async (request, h) => {
     const response = h.response({
       message: 'group activity successfully updated',
     });
-    response.code(201);
+    response.code(200);
     return response;
   } catch (err) {
     const response = h.response({

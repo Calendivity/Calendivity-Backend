@@ -18,6 +18,9 @@
     },
     {
       "name": "groups"
+    },
+    {
+      "name": "group activities"
     }
   ],
   "paths": {
@@ -478,6 +481,252 @@
           }
         ]
       }
+    },
+    "/groups/{groupId}/activities": {
+      "post": {
+        "tags": ["group activities"],
+        "summary": "Create group activity",
+        "description": "Create group activity",
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "description": "Group id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "activityName": {"type": "string"},
+                  "startTime": {"type": "string"},
+                  "endTime": {"type": "string"},
+                  "finishTime": {"type": "string"},
+                  "isFinish": {"type": "boolean"}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {"type": "string"},
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "activityId": {"type": "string"}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "get": {
+        "tags": ["group activities"],
+        "summary": "Get all group activities",
+        "description": "Get all group activities",
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "description": "Group id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Avtivity"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/groups/{groupId}/activities/{activityId}": {
+      "get": {
+        "tags": ["group activities"],
+        "summary": "Get group activity",
+        "description": "Get group activity",
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "description": "Group id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "activityId",
+            "in": "path",
+            "description": "Activity id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Avtivity"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": ["group activities"],
+        "summary": "Update group activity",
+        "description": "Update group activity",
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "description": "Group id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "activityId",
+            "in": "path",
+            "description": "Activity id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "activityName": {"type": "string"},
+                  "startTime": {"type": "string"},
+                  "endTime": {"type": "string"},
+                  "finishTime": {"type": "string"},
+                  "isFinish": {"type": "boolean"}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {"type": "string"}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": ["group activities"],
+        "summary": "Delete group activity",
+        "description": "Delete group activity",
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "description": "Group id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "activityId",
+            "in": "path",
+            "description": "Activity id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {"type": "string"}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
     }
   },
   "components": {
@@ -529,6 +778,17 @@
           },
           "user_ratings_total": {"type": "number"},
           "vicinity": {"type": "string"}
+        }
+      },
+      "Avtivity": {
+        "type": "object",
+        "properties": {
+          "activityId": {"type": "string"},
+          "activityName": {"type": "string"},
+          "startTime": {"type": "string"},
+          "endTime": {"type": "string"},
+          "finishTime": {"type": "string"},
+          "isFinish": {"type": "boolean"}
         }
       }
     },
