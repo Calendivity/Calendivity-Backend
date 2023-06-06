@@ -205,9 +205,44 @@ const updateChallengeHandler = async (request, h) => {
   }
 };
 
+const deleteChallengeHandler = async (request, h) => {
+  try {
+    const {challengeId} = request.params;
+
+    // get a challenge from chellenges collection by challengeId
+    const challengesRef = await db.collection('challenges');
+    const challenge = await challengesRef.doc(challengeId).get();
+
+    // check if challenge exists
+    if (!challenge.exists) {
+      const response = h.response({
+        message: 'challenge not found',
+      });
+      response.code(404);
+      return response;
+    }
+
+    // delete challenge
+    challengesRef.doc(challengeId).delete();
+
+    const response = h.response({
+      message: 'challenge successfully deleted',
+    });
+    response.code(200);
+    return response;
+  } catch (err) {
+    const response = h.response({
+      message: err.message,
+    });
+    response.code(500);
+    return response;
+  }
+};
+
 module.exports = {
   createChallengeHandler,
   getAllChallengesHandler,
   getChallengeHandler,
   updateChallengeHandler,
+  deleteChallengeHandler,
 };

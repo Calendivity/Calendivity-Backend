@@ -29,6 +29,7 @@ const {
   getAllChallengesHandler,
   getChallengeHandler,
   updateChallengeHandler,
+  deleteChallengeHandler,
 } = require('./handler/challengeHandler');
 
 const routes = [
@@ -186,6 +187,14 @@ const routes = [
     options: {
       pre: [{method: verifyGoogle}],
       handler: updateChallengeHandler,
+    },
+  },
+  {
+    method: 'DELETE',
+    path: '/challenges/{challengeId}',
+    options: {
+      pre: [{method: verifyGoogle}],
+      handler: deleteChallengeHandler,
     },
   },
 ];
