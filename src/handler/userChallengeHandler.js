@@ -40,7 +40,7 @@ const createUserChallenge = async (request, h) => {
     const response = h.response({
       message: 'user challenge successfully created',
       data: {
-        activityId: userChallengeSnap.id,
+        userChallengeId: userChallengeSnap.id,
       },
     });
     response.code(201);

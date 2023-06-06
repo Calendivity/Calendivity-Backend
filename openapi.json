@@ -17,6 +17,12 @@
       "name": "users"
     },
     {
+      "name": "user activities"
+    },
+    {
+      "name": "user challenges"
+    },
+    {
       "name": "groups"
     },
     {
@@ -734,8 +740,8 @@
     "/challenges": {
       "post": {
         "tags": ["challenges"],
-        "summary": "Create challenges",
-        "description": "Create challenges",
+        "summary": "Create challenge",
+        "description": "Create challenge",
         "requestBody": {
           "content": {
             "application/json": {
@@ -808,8 +814,8 @@
     "/challenges/{challengeId}": {
       "get": {
         "tags": ["challenges"],
-        "summary": "Get challenges",
-        "description": "Get challenges",
+        "summary": "Get challenge",
+        "description": "Get challenge",
         "parameters": [
           {
             "name": "challengeId",
@@ -841,8 +847,8 @@
       },
       "put": {
         "tags": ["challenges"],
-        "summary": "Update challenges",
-        "description": "Update challenges",
+        "summary": "Update challenge",
+        "description": "Update challenge",
         "parameters": [
           {
             "name": "challengeId",
@@ -894,13 +900,400 @@
       },
       "delete": {
         "tags": ["challenges"],
-        "summary": "Delete challenges",
-        "description": "Delete challenges",
+        "summary": "Delete challenge",
+        "description": "Delete challenge",
         "parameters": [
           {
             "name": "challengeId",
             "in": "path",
             "description": "Challenge id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {"type": "string"}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/users/challenges": {
+      "post": {
+        "tags": ["user challenges"],
+        "summary": "Create user challenge",
+        "description": "Create user challenge",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "challengeId": {"type": "string"}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {"type": "string"},
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "userChallengeId": {"type": "string"}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "get": {
+        "tags": ["user challenges"],
+        "summary": "Get all user challenges",
+        "description": "Get all user challenges",
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UserChallenge"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/users/challenges/{userChallengeId}": {
+      "get": {
+        "tags": ["user challenges"],
+        "summary": "Get user challenge",
+        "description": "Get user challenge",
+        "parameters": [
+          {
+            "name": "userChallengeId",
+            "in": "path",
+            "description": "User challenge id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserChallenge"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": ["user challenges"],
+        "summary": "Update user challenge",
+        "description": "Update user challenge",
+        "parameters": [
+          {
+            "name": "userChallengeId",
+            "in": "path",
+            "description": "User challenge id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "challengeId": {"type": "string"},
+                  "points": {"type": "number"}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {"type": "string"}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": ["user challenges"],
+        "summary": "Delete user challenge",
+        "description": "Delete user challenge",
+        "parameters": [
+          {
+            "name": "userChallengeId",
+            "in": "path",
+            "description": "User challenge id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {"type": "string"}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/users/activities": {
+      "post": {
+        "tags": ["user activities"],
+        "summary": "Create user activity",
+        "description": "Create user activity",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "activityName": {"type": "string"},
+                  "startTime": {"type": "string"},
+                  "endTime": {"type": "string"},
+                  "finishTime": {"type": "string"},
+                  "isFinish": {"type": "boolean"}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {"type": "string"},
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "activityId": {"type": "string"}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "get": {
+        "tags": ["user activities"],
+        "summary": "Get all user activities",
+        "description": "Get all user activities",
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Activity"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/users/activities/{activityId}": {
+      "get": {
+        "tags": ["user activities"],
+        "summary": "Get user activity",
+        "description": "Get user activity",
+        "parameters": [
+          {
+            "name": "activityId",
+            "in": "path",
+            "description": "Activity id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Activity"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": ["user activities"],
+        "summary": "Update user activity",
+        "description": "Update user activity",
+        "parameters": [
+          {
+            "name": "activityId",
+            "in": "path",
+            "description": "Activity id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "activityName": {"type": "string"},
+                  "startTime": {"type": "string"},
+                  "endTime": {"type": "string"},
+                  "finishTime": {"type": "string"},
+                  "isFinish": {"type": "boolean"}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {"type": "string"}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": ["user activities"],
+        "summary": "Delete user activity",
+        "description": "Delete user activity",
+        "parameters": [
+          {
+            "name": "activityId",
+            "in": "path",
+            "description": "Activity id",
             "required": true,
             "schema": {
               "type": "string"
@@ -1002,6 +1395,15 @@
           "points": {"type": "number"},
           "startTime": {"type": "string"},
           "endTime": {"type": "string"}
+        }
+      },
+      "UserChallenge": {
+        "type": "object",
+        "properties": {
+          "userChallengeId": {"type": "string"},
+          "userId": {"type": "string"},
+          "challengeId": {"type": "string"},
+          "points": {"type": "number"}
         }
       }
     },
