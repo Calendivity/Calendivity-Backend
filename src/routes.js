@@ -38,7 +38,10 @@ const {
   updateUserActivityHandler,
   deleteUserActivityHandler,
 } = require('./handler/userActivityHandler');
-const {createUserChallenge} = require('./handler/userChallengeHandler');
+const {
+  createUserChallenge,
+  getAllUserChallengeHandler,
+} = require('./handler/userChallengeHandler');
 
 const routes = [
   // auth
@@ -253,6 +256,14 @@ const routes = [
     options: {
       pre: [{method: verifyGoogle}],
       handler: createUserChallenge,
+    },
+  },
+  {
+    method: 'GET',
+    path: '/users/challenges',
+    options: {
+      pre: [{method: verifyGoogle}],
+      handler: getAllUserChallengeHandler,
     },
   },
 ];

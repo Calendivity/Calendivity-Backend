@@ -31,7 +31,6 @@ const createUserChallenge = async (request, h) => {
     const userChallengeSnap = await userChallengesRef.add({
       userId,
       challengeId,
-      goals: challenge.data().goals,
       points: 0,
     });
     userChallengesRef.doc(userChallengeSnap.id).update({
@@ -55,4 +54,30 @@ const createUserChallenge = async (request, h) => {
   }
 };
 
-module.exports = {createUserChallenge};
+const getAllUserChallengeHandler = async (request, h) => {
+  try {
+    const userChallenges = [];
+    const userChallengesRef = await db.collection('userChallenges');
+
+    // get all user challenges
+    const userChallengesSnap = await userChallengesRef.get();
+    userChallengesSnap.forEach((doc) => {
+      userChallenges.push(doc.data());
+    });
+
+    const response = h.response({
+      message: 'oke',
+      data: userChallenges,
+    });
+    response.code(200);
+    return response;
+  } catch (err) {
+    const response = h.response({
+      message: err.message,
+    });
+    response.code(500);
+    return response;
+  }
+};
+
+module.exports = {createUserChallenge, getAllUserChallengeHandler};
