@@ -25,13 +25,22 @@ const {
   deleteGroupActivityHandler,
 } = require('./handler/groupActivityHandler');
 const {
+  createChallengeHandler,
+  getAllChallengesHandler,
+  getChallengeHandler,
+  updateChallengeHandler,
+  deleteChallengeHandler,
+} = require('./handler/challengeHandler');
+const {
   createUserActivityHandler,
   getUserActivityHandler,
   getAllUserActivitiesHandler,
   updateUserActivityHandler,
   deleteUserActivityHandler,
 } = require('./handler/userActivityHandler');
+
 const routes = [
+  // auth
   {
     method: 'GET',
     path: '/auth',
@@ -42,6 +51,7 @@ const routes = [
     path: '/tokenrefresh',
     handler: tokenRefreshHandler,
   },
+  // user
   {
     method: 'GET',
     path: '/userinfo',
@@ -63,6 +73,7 @@ const routes = [
       handler: getUserGroupsHandler,
     },
   },
+  // group
   {
     method: 'POST',
     path: '/groups',
@@ -111,6 +122,7 @@ const routes = [
       handler: getPlacesByGroupMembersPositionHandler,
     },
   },
+  // group activity
   {
     method: 'POST',
     path: '/groups/{groupId}/activities',
@@ -151,6 +163,48 @@ const routes = [
       handler: deleteGroupActivityHandler,
     },
   },
+  // challenge
+  {
+    method: 'POST',
+    path: '/challenges',
+    options: {
+      pre: [{method: verifyGoogle}],
+      handler: createChallengeHandler,
+    },
+  },
+  {
+    method: 'GET',
+    path: '/challenges',
+    options: {
+      pre: [{method: verifyGoogle}],
+      handler: getAllChallengesHandler,
+    },
+  },
+  {
+    method: 'GET',
+    path: '/challenges/{challengeId}',
+    options: {
+      pre: [{method: verifyGoogle}],
+      handler: getChallengeHandler,
+    },
+  },
+  {
+    method: 'PUT',
+    path: '/challenges/{challengeId}',
+    options: {
+      pre: [{method: verifyGoogle}],
+      handler: updateChallengeHandler,
+    },
+  },
+  {
+    method: 'DELETE',
+    path: '/challenges/{challengeId}',
+    options: {
+      pre: [{method: verifyGoogle}],
+      handler: deleteChallengeHandler,
+    },
+  },
+  // user activity
   {
     method: 'POST',
     path: '/users/{calendarId}/activities',
