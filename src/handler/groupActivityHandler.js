@@ -47,6 +47,9 @@ const createGroupActivityHandler = async (request, h) => {
 
     const response = h.response({
       message: 'group activity successfully created',
+      data: {
+        activityId: groupActivityRes.id,
+      },
     });
     response.code(201);
     return response;

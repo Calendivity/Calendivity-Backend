@@ -74,6 +74,14 @@ const routes = [
     },
   },
   {
+    method: 'GET',
+    path: '/groups/{groupId}/users',
+    options: {
+      pre: [{method: verifyGoogle}],
+      handler: getGroupUsersHandler,
+    },
+  },
+  {
     method: 'DELETE',
     path: '/groups/{groupId}/users',
     options: {
@@ -95,14 +103,6 @@ const routes = [
     options: {
       pre: [{method: verifyGoogle}],
       handler: getPlacesByGroupMembersPositionHandler,
-    },
-  },
-  {
-    method: 'GET',
-    path: '/groups/{groupId}/users',
-    options: {
-      pre: [{method: verifyGoogle}],
-      handler: getGroupUsersHandler,
     },
   },
   {
@@ -143,22 +143,6 @@ const routes = [
     options: {
       pre: [{method: verifyGoogle}],
       handler: deleteGroupActivityHandler,
-    },
-  },
-  {
-    method: 'GET',
-    path: '/groups/{groupId}/avtivities/{activityId}',
-    options: {
-      pre: [{method: verifyGoogle}],
-      handler: getAGroupActivityHandler,
-    },
-  },
-  {
-    method: 'PUT',
-    path: '/groups/{groupId}/avtivities/{activityId}',
-    options: {
-      pre: [{method: verifyGoogle}],
-      handler: updateGroupActivityHandler,
     },
   },
 ];
