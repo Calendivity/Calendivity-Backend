@@ -112,6 +112,72 @@ const getUserChallengeHandler = async (request, h) => {
   }
 };
 
+const updateUserChallengeHandler = async (request, h) => {
+  try {
+    const {userChallengeId} = request.params;
+    const {challengeId, points} = request.payload;
+
+    // check request body paylaod
+    if (!challengeId && !points) {
+      const response = h.response({
+        message: 'no content',
+      });
+      response.code(204);
+      return response;
+    }
+
+    // get a user challenge from userChellenges collection by userChallengeId
+    const userChallengesRef = await db.collection('userChallenges');
+    const userChallenge = await userChallengesRef.doc(userChallengeId).get();
+
+    // check if user challenge exists
+    if (!userChallenge.exists) {
+      const response = h.response({
+        message: 'user challenge not found',
+      });
+      response.code(404);
+      return response;
+    }
+
+    // check undefined properties
+    const updatedUserChallenge = {};
+    if (challengeId) {
+      // get a challenge from chellenges collection by challengeId
+      const challengesRef = await db.collection('challenges');
+      const challenge = await challengesRef.doc(challengeId).get();
+
+      // check if challenge exists
+      if (!challenge.exists) {
+        const response = h.response({
+          message: 'challenge not found',
+        });
+        response.code(404);
+        return response;
+      }
+
+      updatedUserChallenge.challengeId = challengeId;
+    }
+    if (points) {
+      updatedUserChallenge.points = points;
+    }
+
+    // update user challenge
+    userChallengesRef.doc(userChallengeId).update(updatedUserChallenge);
+
+    const response = h.response({
+      message: 'user challenge successfully updated',
+    });
+    response.code(200);
+    return response;
+  } catch (err) {
+    const response = h.response({
+      message: err.message,
+    });
+    response.code(500);
+    return response;
+  }
+};
+
 const deleteUserChallengeHandler = async (request, h) => {
   try {
     const {userChallengeId} = request.params;
@@ -150,5 +216,6 @@ module.exports = {
   createUserChallenge,
   getAllUserChallengeHandler,
   getUserChallengeHandler,
+  updateUserChallengeHandler,
   deleteUserChallengeHandler,
 };

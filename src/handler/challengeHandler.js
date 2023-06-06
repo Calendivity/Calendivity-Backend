@@ -21,7 +21,6 @@ const createChallengeHandler = async (request, h) => {
       challengeName,
       description,
       goals,
-      points: 0,
       startTime: Timestamp.fromDate(new Date(startTime)),
       endTime: Timestamp.fromDate(new Date(endTime)),
     });
