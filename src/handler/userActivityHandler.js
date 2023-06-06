@@ -255,4 +255,46 @@ const updateUserActivityHandler = async (request, h) => {
     return response;
   }
 };
-module.exports = {createUserActivityHandler, getUserActivityHandler, getAllUserActivitiesHandler, updateUserActivityHandler};
+
+const deleteUserActivityHandler = async (request, h) => {
+  try {
+    const {calendarId, activityId} = request.params;
+
+    // check if user exists
+    const userRes = await db.collection('users').doc(calendarId).get();
+    if (!userRes.exists) {
+      const response = h.response({
+        message: `user ${calendarId} does not exist`,
+      });
+      response.code(404);
+      return response;
+    }
+
+    const userActivitiesRef = await db.collection('userActivities');
+    const userActivity = await userActivitiesRef.doc(activityId).get();
+
+    // check if activity exists
+    if (!userActivity.exists) {
+      const response = h.response({
+        message: `activity ${activityId} does not exist`,
+      });
+      response.code(404);
+      return response;
+    }
+
+    userActivitiesRef.doc(activityId).delete();
+
+    const response = h.response({
+      message: 'user activity successfully deteled',
+    });
+    response.code(200);
+    return response;
+  } catch (err) {
+    const response = h.response({
+      message: err.message,
+    });
+    response.code(500);
+    return response;
+  }
+};
+module.exports = {createUserActivityHandler, getUserActivityHandler, getAllUserActivitiesHandler, updateUserActivityHandler, deleteUserActivityHandler};
