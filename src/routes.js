@@ -24,8 +24,10 @@ const {
   updateGroupActivityHandler,
   deleteGroupActivityHandler,
 } = require('./handler/groupActivityHandler');
+const {createChallengeHandler} = require('./handler/challengeHandler');
 
 const routes = [
+  // auth
   {
     method: 'GET',
     path: '/auth',
@@ -36,6 +38,7 @@ const routes = [
     path: '/tokenrefresh',
     handler: tokenRefreshHandler,
   },
+  // user
   {
     method: 'GET',
     path: '/userinfo',
@@ -57,6 +60,7 @@ const routes = [
       handler: getUserGroupsHandler,
     },
   },
+  // group
   {
     method: 'POST',
     path: '/groups',
@@ -105,6 +109,7 @@ const routes = [
       handler: getPlacesByGroupMembersPositionHandler,
     },
   },
+  // group activity
   {
     method: 'POST',
     path: '/groups/{groupId}/avtivities',
@@ -143,6 +148,15 @@ const routes = [
     options: {
       pre: [{method: verifyGoogle}],
       handler: deleteGroupActivityHandler,
+    },
+  },
+  // challenge
+  {
+    method: 'POST',
+    path: '/challenges',
+    options: {
+      pre: [{method: verifyGoogle}],
+      handler: createChallengeHandler,
     },
   },
 ];
