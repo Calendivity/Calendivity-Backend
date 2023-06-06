@@ -28,6 +28,7 @@ const {
   createChallengeHandler,
   getAllChallengesHandler,
   getChallengeHandler,
+  updateChallengeHandler,
 } = require('./handler/challengeHandler');
 
 const routes = [
@@ -177,6 +178,14 @@ const routes = [
     options: {
       pre: [{method: verifyGoogle}],
       handler: getChallengeHandler,
+    },
+  },
+  {
+    method: 'PUT',
+    path: '/challenges/{challengeId}',
+    options: {
+      pre: [{method: verifyGoogle}],
+      handler: updateChallengeHandler,
     },
   },
 ];

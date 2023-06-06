@@ -15,6 +15,7 @@ const createChallengeHandler = async (request, h) => {
       return response;
     }
 
+    // add new challenge to challenges collection
     const challengesRef = await db.collection('challenges');
     const challengeSnap = await challengesRef.add({
       challengeName,
@@ -99,9 +100,11 @@ const getChallengeHandler = async (request, h) => {
   try {
     const {challengeId} = request.params;
 
+    // get a challenge from chellenges collection by challengeId
     const challengesRef = await db.collection('challenges');
     const challenge = await challengesRef.doc(challengeId).get();
 
+    // check if challenge exists
     if (!challenge.exists) {
       const response = h.response({
         message: 'challenge not found',
@@ -129,8 +132,82 @@ const getChallengeHandler = async (request, h) => {
   }
 };
 
+const updateChallengeHandler = async (request, h) => {
+  try {
+    const {challengeId} = request.params;
+    const {challengeName, description, goals, points, startTime, endTime} =
+      request.payload;
+
+    // check request body paylaod
+    if (
+      !challengeName &&
+      !description &&
+      !goals &&
+      !points &&
+      !startTime &&
+      !endTime
+    ) {
+      const response = h.response({
+        message: 'no content',
+      });
+      response.code(204);
+      return response;
+    }
+
+    // get a challenge from chellenges collection by challengeId
+    const challengesRef = await db.collection('challenges');
+    const challenge = await challengesRef.doc(challengeId).get();
+
+    // check if challenge exists
+    if (!challenge.exists) {
+      const response = h.response({
+        message: 'challenge not found',
+      });
+      response.code(404);
+      return response;
+    }
+
+    // check undefined properties
+    const updatedChallenge = {};
+    if (challengeName) {
+      updatedChallenge.challengeName = challengeName;
+    }
+    if (description) {
+      updatedChallenge.description = description;
+    }
+    if (goals) {
+      updatedChallenge.goals = goals;
+    }
+    if (points) {
+      updatedChallenge.points = points;
+    }
+    if (startTime) {
+      updatedChallenge.startTime = Timestamp.fromDate(new Date(startTime));
+    }
+    if (endTime) {
+      updatedChallenge.endTime = Timestamp.fromDate(new Date(endTime));
+    }
+
+    // update challenge
+    challengesRef.doc(challengeId).update(updatedChallenge);
+
+    const response = h.response({
+      message: 'challenge successfully updated',
+    });
+    response.code(200);
+    return response;
+  } catch (err) {
+    const response = h.response({
+      message: err.message,
+    });
+    response.code(500);
+    return response;
+  }
+};
+
 module.exports = {
   createChallengeHandler,
   getAllChallengesHandler,
   getChallengeHandler,
+  updateChallengeHandler,
 };
