@@ -179,4 +179,80 @@ const getAllUserActivitiesHandler = async (request, h) => {
     return response;
   }
 };
-module.exports = {createUserActivityHandler, getUserActivityHandler, getAllUserActivitiesHandler};
+
+const updateUserActivityHandler = async (request, h) => {
+  try {
+    const {calendarId, activityId} = request.params;
+    const {activityName, startTime, endTime, finishTime, isFinish} = request.payload;
+
+    // check request body payload
+    if (
+      !activityName &&
+      !startTime &&
+      !endTime &&
+      !finishTime &&
+      isFinish === undefined
+    ) {
+      const response = h.response({
+        message: 'no content',
+      });
+      response.code(204);
+      return response;
+    }
+
+    // check if user exists
+    const userRes = await db.collection('users').doc(calendarId).get();
+    if (!userRes.exists) {
+      const response = h.response({
+        message: `user ${calendarId} does not exist`,
+      });
+      response.code(404);
+      return response;
+    }
+
+    const userActivitiesRef = await db.collection('userActivities');
+    const userActivity = await userActivitiesRef.doc(activityId).get();
+
+    // check if activity exists
+    if (!userActivity.exists) {
+      const response = h.response({
+        message: `activity ${activityId} does not exist`,
+      });
+      response.code(404);
+      return response;
+    }
+
+    // check the undefined properties
+    const updatedActivity = {};
+    if (activityName) {
+      updatedActivity.activityName = activityName;
+    }
+    if (startTime) {
+      updatedActivity.startTime = Timestamp.fromDate(new Date(startTime));
+    }
+    if (endTime) {
+      updatedActivity.endTime = Timestamp.fromDate(new Date(endTime));
+    }
+    if (finishTime) {
+      updatedActivity.finishTime = Timestamp.fromDate(new Date(finishTime));
+    }
+    if (isFinish !== undefined) {
+      updatedActivity.isFinish = isFinish;
+    }
+
+    userActivitiesRef.doc(activityId).update(updatedActivity);
+
+    const response = h.response({
+      message: 'user activity successfully updated',
+    });
+    response.code(200);
+    return response;
+  } catch (err) {
+    const response = h.response({
+      message: err.message,
+    });
+    response.code(500);
+    return response;
+  }
+};
+module.exports = {createUserActivityHandler, getUserActivityHandler, getAllUserActivitiesHandler, updateUserActivityHandler};
