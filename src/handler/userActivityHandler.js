@@ -4,12 +4,19 @@ const {db} = require('../../firestore');
 
 const createUserActivityHandler = async (request, h) => {
   try {
-    const {activityName, startTime, endTime, isFinish, finishTime} =
-      request.payload;
+    const {
+      activityName,
+      description,
+      startTime,
+      endTime,
+      isFinish,
+      finishTime,
+    } = request.payload;
     const userId = request.authUser.email;
     // check request body payload
     if (
       !activityName ||
+      !description ||
       !startTime ||
       !endTime ||
       !finishTime ||
@@ -26,6 +33,7 @@ const createUserActivityHandler = async (request, h) => {
     const activitiesRes = await db.collection('userActivities').add({
       userId: userId,
       activityName: activityName,
+      description: description,
       startTime: Timestamp.fromDate(new Date(startTime)),
       endTime: Timestamp.fromDate(new Date(endTime)),
       finishTime: Timestamp.fromDate(new Date(finishTime)),
@@ -151,12 +159,19 @@ const getAllUserActivitiesHandler = async (request, h) => {
 const updateUserActivityHandler = async (request, h) => {
   try {
     const {activityId} = request.params;
-    const {activityName, startTime, endTime, finishTime, isFinish} =
-      request.payload;
+    const {
+      activityName,
+      description,
+      startTime,
+      endTime,
+      finishTime,
+      isFinish,
+    } = request.payload;
 
     // check request body payload
     if (
       !activityName &&
+      !description &&
       !startTime &&
       !endTime &&
       !finishTime &&
@@ -185,6 +200,9 @@ const updateUserActivityHandler = async (request, h) => {
     const updatedActivity = {};
     if (activityName) {
       updatedActivity.activityName = activityName;
+    }
+    if (description) {
+      updatedActivity.description = description;
     }
     if (startTime) {
       updatedActivity.startTime = Timestamp.fromDate(new Date(startTime));

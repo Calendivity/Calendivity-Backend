@@ -14,6 +14,7 @@ const {
 } = require('./handler/groupHandler');
 const {
   getPersonalEventsHandler,
+  getPersonalEventActivitiesHandler,
   getGroupEventsHandler,
 } = require('./handler/calendarHandler');
 const {
@@ -73,6 +74,14 @@ const routes = [
     options: {
       pre: [{method: verifyGoogle}],
       handler: getPersonalEventsHandler,
+    },
+  },
+  {
+    method: 'GET',
+    path: '/users/eventactivities',
+    options: {
+      pre: [{method: verifyGoogle}],
+      handler: getPersonalEventActivitiesHandler,
     },
   },
   {
