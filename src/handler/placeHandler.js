@@ -2,7 +2,7 @@
 const {db} = require('../../firestore');
 const axios = require('axios');
 
-const getPlacesByGroupMembersPositionHandler = async (request, h) => {
+const getAllPlacesByGroupMembersPositionHandler = async (request, h) => {
   // Get users from membership firestore collection based on groupId
   const {groupId} = request.params;
   const groupsRef = db.collection('memberships');
@@ -68,4 +68,32 @@ const getPlacesByGroupMembersPositionHandler = async (request, h) => {
   }
 };
 
-module.exports = {getPlacesByGroupMembersPositionHandler};
+const getPlaceByPlaceId = async (request, h) => {
+  try {
+    const {placeId} = request.params;
+
+    // get place by place_id from google place api
+    const response = await axios.get(
+      `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&key=${process.env.MAPS_API_KEY}`,
+    );
+
+    // check if place not found
+    if (response.data.status === 'INVALID_REQUEST') {
+      const response = h.response({
+        message: 'place not found',
+      });
+      response.code(404);
+      return response;
+    }
+
+    return response.data;
+  } catch (err) {
+    const response = h.response({
+      message: err.message,
+    });
+    response.code(500);
+    return response;
+  }
+};
+
+module.exports = {getAllPlacesByGroupMembersPositionHandler, getPlaceByPlaceId};

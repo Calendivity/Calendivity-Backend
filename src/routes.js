@@ -17,7 +17,8 @@ const {
   getGroupEventsHandler,
 } = require('./handler/calendarHandler');
 const {
-  getPlacesByGroupMembersPositionHandler,
+  getAllPlacesByGroupMembersPositionHandler,
+  getPlaceByPlaceId,
 } = require('./handler/placeHandler');
 const {
   createGroupActivityHandler,
@@ -144,7 +145,7 @@ const routes = [
     path: '/groups/{groupId}/places',
     options: {
       pre: [{method: verifyGoogle}],
-      handler: getPlacesByGroupMembersPositionHandler,
+      handler: getAllPlacesByGroupMembersPositionHandler,
     },
   },
   // group activity
@@ -309,6 +310,15 @@ const routes = [
     options: {
       pre: [{method: verifyGoogle}],
       handler: deleteUserChallengeHandler,
+    },
+  },
+  // place
+  {
+    method: 'GET',
+    path: '/places/{placeId}',
+    options: {
+      pre: [{method: verifyGoogle}],
+      handler: getPlaceByPlaceId,
     },
   },
 ];
