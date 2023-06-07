@@ -16,6 +16,7 @@ const {
   getPersonalEventsHandler,
   getPersonalEventActivitiesHandler,
   getGroupEventsHandler,
+  getGroupEventActivitiesHandler,
 } = require('./handler/calendarHandler');
 const {
   getAllPlacesByGroupMembersPositionHandler,
@@ -147,6 +148,14 @@ const routes = [
     options: {
       pre: [{method: verifyGoogle}],
       handler: getGroupEventsHandler,
+    },
+  },
+  {
+    method: 'GET',
+    path: '/groups/{groupId}/eventactivities',
+    options: {
+      pre: [{method: verifyGoogle}],
+      handler: getGroupEventActivitiesHandler,
     },
   },
   {
