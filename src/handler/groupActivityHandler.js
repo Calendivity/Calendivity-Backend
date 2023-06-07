@@ -4,12 +4,19 @@ const {Timestamp} = require('@google-cloud/firestore');
 const createGroupActivityHandler = async (request, h) => {
   try {
     const {groupId} = request.params;
-    const {activityName, startTime, endTime, finishTime, isFinish} =
-      request.payload;
+    const {
+      activityName,
+      description,
+      startTime,
+      endTime,
+      finishTime,
+      isFinish,
+    } = request.payload;
 
     // check request body paylaod
     if (
       !activityName ||
+      !description ||
       !startTime ||
       !endTime ||
       !finishTime ||
@@ -178,12 +185,19 @@ const getGroupActivityHandler = async (request, h) => {
 const updateGroupActivityHandler = async (request, h) => {
   try {
     const {groupId, activityId} = request.params;
-    const {activityName, startTime, endTime, finishTime, isFinish} =
-      request.payload;
+    const {
+      activityName,
+      description,
+      startTime,
+      endTime,
+      finishTime,
+      isFinish,
+    } = request.payload;
 
     // check request body paylaod
     if (
       !activityName &&
+      !description &&
       !startTime &&
       !endTime &&
       !finishTime &&
@@ -222,6 +236,9 @@ const updateGroupActivityHandler = async (request, h) => {
     const updatedActivity = {};
     if (activityName) {
       updatedActivity.activityName = activityName;
+    }
+    if (description) {
+      updatedActivity.description = description;
     }
     if (startTime) {
       updatedActivity.startTime = Timestamp.fromDate(new Date(startTime));

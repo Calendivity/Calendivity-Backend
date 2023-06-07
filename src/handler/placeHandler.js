@@ -2,34 +2,41 @@
 const {db} = require('../../firestore');
 const axios = require('axios');
 
-const getPlacesByGroupMembersPositionHandler = async (request, h) => {
-  // Get users from membership firestore collection based on groupId
-  const {groupId} = request.params;
-  const groupsRef = db.collection('memberships');
-  const snapshot = await groupsRef.where('groupId', '==', groupId).get();
+const getAllPlacesByGroupMembersPositionHandler = async (request, h) => {
+  try {
+    const {groupId} = request.params;
+    const userIds = request.query.userIds.split(',');
 
-  const users = [];
-  snapshot.forEach((doc) => {
-    users.push(doc.data().userId);
-  });
-
-  // Function to fetch user locations from Firestore based on user IDs
-  async function getUserLocations(userIds) {
-    const locations = [];
-    const userRef = db.collection('users');
-
-    for (const userId of userIds) {
-      const locationSnapshot = await userRef.doc(userId).get();
-      const location = locationSnapshot.data().position;
-      locations.push(location);
+    // check should have at least two users
+    if (userIds.length < 2) {
+      const response = h.response({
+        message: 'should have at least two users',
+      });
+      response.code(400);
+      return response;
     }
 
-    return locations;
-  }
+    const membershipsRef = await db.collection('memberships');
+    for (const userId of userIds) {
+      const membershipsSnap = await membershipsRef
+        .where('userId', '==', userId)
+        .where('groupId', '==', groupId)
+        .get();
+      if (membershipsSnap.empty) {
+        const response = h.response({
+          message: 'all users must be a members of this group',
+        });
+        response.code(400);
+        return response;
+      }
+    }
 
-  // Process user locations and calculate midpoint
-  try {
-    const userLocations = await getUserLocations(users);
+    const userLocations = [];
+    const usersRef = db.collection('users');
+    for (const userId of userIds) {
+      const usersSnap = await usersRef.doc(userId).get();
+      userLocations.push(usersSnap.data().position);
+    }
 
     let sumLatRadians = 0;
     let sumLonRadians = 0;
@@ -50,7 +57,7 @@ const getPlacesByGroupMembersPositionHandler = async (request, h) => {
     const midpointLatitude = midLatRadians * (180 / Math.PI);
     const midpointLongitude = midLonRadians * (180 / Math.PI);
 
-    //
+    // google place api query
     const {radius = 1000, keyword = 'meeting room'} = request.query;
 
     // Execute axios and return user events array
@@ -68,4 +75,32 @@ const getPlacesByGroupMembersPositionHandler = async (request, h) => {
   }
 };
 
-module.exports = {getPlacesByGroupMembersPositionHandler};
+const getPlaceByPlaceId = async (request, h) => {
+  try {
+    const {placeId} = request.params;
+
+    // get place by place_id from google place api
+    const response = await axios.get(
+      `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&key=${process.env.MAPS_API_KEY}`,
+    );
+
+    // check if place not found
+    if (response.data.status === 'INVALID_REQUEST') {
+      const response = h.response({
+        message: 'place not found',
+      });
+      response.code(404);
+      return response;
+    }
+
+    return response.data;
+  } catch (err) {
+    const response = h.response({
+      message: err.message,
+    });
+    response.code(500);
+    return response;
+  }
+};
+
+module.exports = {getAllPlacesByGroupMembersPositionHandler, getPlaceByPlaceId};

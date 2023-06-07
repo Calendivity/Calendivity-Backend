@@ -15,10 +15,13 @@ const {
 } = require('./handler/groupHandler');
 const {
   getPersonalEventsHandler,
+  getPersonalEventActivitiesHandler,
   getGroupEventsHandler,
+  getGroupEventActivitiesHandler,
 } = require('./handler/calendarHandler');
 const {
-  getPlacesByGroupMembersPositionHandler,
+  getAllPlacesByGroupMembersPositionHandler,
+  getPlaceByPlaceId,
 } = require('./handler/placeHandler');
 const {
   createGroupActivityHandler,
@@ -73,6 +76,14 @@ const routes = [
     options: {
       pre: [{method: verifyGoogle}],
       handler: getPersonalEventsHandler,
+    },
+  },
+  {
+    method: 'GET',
+    path: '/users/eventactivities',
+    options: {
+      pre: [{method: verifyGoogle}],
+      handler: getPersonalEventActivitiesHandler,
     },
   },
   {
@@ -150,10 +161,18 @@ const routes = [
   },
   {
     method: 'GET',
+    path: '/groups/{groupId}/eventactivities',
+    options: {
+      pre: [{method: verifyGoogle}],
+      handler: getGroupEventActivitiesHandler,
+    },
+  },
+  {
+    method: 'GET',
     path: '/groups/{groupId}/places',
     options: {
       pre: [{method: verifyGoogle}],
-      handler: getPlacesByGroupMembersPositionHandler,
+      handler: getAllPlacesByGroupMembersPositionHandler,
     },
   },
   // group activity
@@ -318,6 +337,15 @@ const routes = [
     options: {
       pre: [{method: verifyGoogle}],
       handler: deleteUserChallengeHandler,
+    },
+  },
+  // place
+  {
+    method: 'GET',
+    path: '/places/{placeId}',
+    options: {
+      pre: [{method: verifyGoogle}],
+      handler: getPlaceByPlaceId,
     },
   },
 ];
