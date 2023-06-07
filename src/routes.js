@@ -10,6 +10,7 @@ const {
   removeFromGroupHandler,
   getGroupUsersHandler,
   updateGroupHandler,
+  deleteGroupHandler,
 } = require('./handler/groupHandler');
 const {
   getPersonalEventsHandler,
@@ -96,6 +97,14 @@ const routes = [
     options: {
       pre: [{method: verifyGoogle}],
       handler: updateGroupHandler,
+    },
+  },
+  {
+    method: 'DELETE',
+    path: '/groups/{groupId}',
+    options: {
+      pre: [{method: verifyGoogle}],
+      handler: deleteGroupHandler,
     },
   },
   {

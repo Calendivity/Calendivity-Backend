@@ -70,7 +70,7 @@ const updateGroupHandler = async (request, h) => {
   const groupSnapshot = await groupRef.where('groupId', '==', groupId).get();
   if (groupSnapshot.empty) {
     const response = h.response({
-      message: `group ${groupId} is not available`,
+      message: `group ${groupId} is not exist`,
     });
     response.code(400);
     return response;
@@ -104,6 +104,46 @@ const updateGroupHandler = async (request, h) => {
 
   const response = h.response({
     message: 'group activity successfully updated',
+  });
+  response.code(200);
+  return response;
+};
+
+const deleteGroupHandler = async (request, h) => {
+  const adminId = request.authUser.email;
+  const {groupId} = request.params;
+
+  // check the group is available
+  const groupRef = await db.collection('groups');
+  const groupSnapshot = await groupRef.where('groupId', '==', groupId).get();
+  if (groupSnapshot.empty) {
+    const response = h.response({
+      message: `group ${groupId} is not exist`,
+    });
+    response.code(400);
+    return response;
+  }
+
+  // check the deleter should be an admin
+  const membershipRef = await db.collection('memberships');
+  const adminSnapshot = await membershipRef
+    .where('role', '==', 'admin')
+    .where('userId', '==', adminId)
+    .where('groupId', '==', groupId)
+    .get();
+  if (adminSnapshot.empty) {
+    const response = h.response({
+      message: `you are not an admin of ${groupId} group`,
+    });
+    response.code(400);
+    return response;
+  }
+
+  // delete group
+  groupRef.doc(groupId).delete();
+
+  const response = h.response({
+    message: 'group is successfully deleted',
   });
   response.code(200);
   return response;
@@ -267,4 +307,5 @@ module.exports = {
   removeFromGroupHandler,
   getGroupUsersHandler,
   updateGroupHandler,
+  deleteGroupHandler,
 };
