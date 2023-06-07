@@ -9,6 +9,7 @@ const {
   inviteToGroupHandler,
   removeFromGroupHandler,
   getGroupUsersHandler,
+  updateGroupHandler,
 } = require('./handler/groupHandler');
 const {
   getPersonalEventsHandler,
@@ -87,6 +88,14 @@ const routes = [
     options: {
       pre: [{method: verifyGoogle}],
       handler: createGroupHandler,
+    },
+  },
+  {
+    method: 'PUT',
+    path: '/groups/{groupId}',
+    options: {
+      pre: [{method: verifyGoogle}],
+      handler: updateGroupHandler,
     },
   },
   {
