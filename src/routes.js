@@ -6,6 +6,7 @@ const {
 } = require('./handler/userHandler');
 const {
   createGroupHandler,
+  getGroupHandler,
   inviteToGroupHandler,
   removeFromGroupHandler,
   getGroupUsersHandler,
@@ -89,6 +90,14 @@ const routes = [
     options: {
       pre: [{method: verifyGoogle}],
       handler: createGroupHandler,
+    },
+  },
+  {
+    method: 'GET',
+    path: '/groups/{groupId}',
+    options: {
+      pre: [{method: verifyGoogle}],
+      handler: getGroupHandler,
     },
   },
   {

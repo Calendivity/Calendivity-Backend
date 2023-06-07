@@ -60,6 +60,35 @@ const createGroupHandler = async (request, h) => {
   response.code(201);
   return response;
 };
+
+const getGroupHandler = async (request, h) => {
+  const {groupId} = request.params;
+
+  const groupRef = await db.collection('groups');
+  const groupSnapshot = await groupRef.where('groupId', '==', groupId).get();
+
+  // check the group is available
+  if (groupSnapshot.empty) {
+    const response = h.response({
+      message: `group ${groupId} is not exist`,
+    });
+    response.code(400);
+    return response;
+  }
+  // get group by id
+  const groups = [];
+  groupSnapshot.forEach((doc) => {
+    groups.push(doc.data());
+  });
+
+  const response = h.response({
+    message: 'group is successfully retrieved',
+    Data: groups,
+  });
+  response.code(200);
+  return response;
+};
+
 const updateGroupHandler = async (request, h) => {
   const adminId = request.authUser.email;
   const {groupId} = request.params;
@@ -103,7 +132,7 @@ const updateGroupHandler = async (request, h) => {
   groupRef.doc(groupId).update(updateGroup);
 
   const response = h.response({
-    message: 'group activity successfully updated',
+    message: 'group is successfully updated',
   });
   response.code(200);
   return response;
@@ -301,8 +330,10 @@ const getGroupUsersHandler = async (request, h) => {
   });
   return response;
 };
+
 module.exports = {
   createGroupHandler,
+  getGroupHandler,
   inviteToGroupHandler,
   removeFromGroupHandler,
   getGroupUsersHandler,
