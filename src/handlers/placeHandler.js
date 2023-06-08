@@ -75,7 +75,7 @@ const getAllPlacesByGroupMembersPositionHandler = async (request, h) => {
   }
 };
 
-const getPlaceByPlaceId = async (request, h) => {
+const getPlaceById = async (request, h) => {
   try {
     const {placeId} = request.params;
 
@@ -103,4 +103,4 @@ const getPlaceByPlaceId = async (request, h) => {
   }
 };
 
-module.exports = {getAllPlacesByGroupMembersPositionHandler, getPlaceByPlaceId};
+module.exports = {getAllPlacesByGroupMembersPositionHandler, getPlaceById};

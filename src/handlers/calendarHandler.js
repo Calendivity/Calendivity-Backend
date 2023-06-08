@@ -78,7 +78,7 @@ const getAllPersonalEventActivitiesHandler = async (request, h) => {
         type: 'user_activity',
         id: doc.data().activityId,
         summary: doc.data().activityName,
-        description: '',
+        description: doc.data().description,
         startTime: new Date(doc.data().startTime.seconds * 1000),
         endTime: new Date(doc.data().endTime.seconds * 1000),
       });
@@ -224,7 +224,7 @@ const getAllGroupEventActivitiesHandler = async (request, h) => {
           user: userId,
           id: doc.data().activityId,
           summary: doc.data().activityName,
-          description: doc.data().description || '',
+          description: doc.data().description,
           startTime: new Date(doc.data().startTime.seconds * 1000),
           endTime: new Date(doc.data().endTime.seconds * 1000),
         });
@@ -255,9 +255,127 @@ const getAllGroupEventActivitiesHandler = async (request, h) => {
   }
 };
 
+const getEventById = async (request, h) => {
+  try {
+    const config = {
+      headers: {Authorization: request.headers.authorization},
+    };
+
+    const {email} = request.authUser;
+    const {eventId} = request.params;
+
+    const eventRes = await axios.get(
+      `https://www.googleapis.com/calendar/v3/calendars/${email}/events/${eventId}`,
+      config,
+    );
+
+    const response = h.response({
+      data: eventRes.data,
+    });
+    response.code(200);
+    return response;
+  } catch (err) {
+    if (err.response.status === 404) {
+      const response = h.response({
+        message: 'event not found',
+      });
+      response.code(404);
+      return response;
+    }
+
+    const response = h.response({
+      message: err.message,
+    });
+    response.code(500);
+    return response;
+  }
+};
+
+const getEventActivityById = async (request, h) => {
+  try {
+    const config = {
+      headers: {Authorization: request.headers.authorization},
+    };
+
+    const {email} = request.authUser;
+    const {eventActivityId} = request.params;
+
+    const eventRes = await axios
+      .get(
+        `https://www.googleapis.com/calendar/v3/calendars/${email}/events/${eventActivityId}`,
+        config,
+      )
+      .then((response) => {
+        response.data.type = 'calendar_event';
+        return response;
+      })
+      .catch((err) => {
+        return err.response;
+      });
+
+    const activitySnap = db
+      .collection('userActivities')
+      .doc(eventActivityId)
+      .get();
+    const activityRes = await activitySnap
+      .then((doc) => {
+        doc.data = doc.data();
+        doc.data.type = 'user_activity';
+        return doc;
+      })
+      .catch((err) => {
+        return err;
+      });
+
+    if (eventRes.status !== 404) {
+      const response = h.response({
+        data: {
+          type: 'calendar_event',
+          id: eventRes.data.id,
+          summary: eventRes.data.summary,
+          description: eventRes.data.description,
+          startTime: new Date(eventRes.data.start.dateTime),
+          endTime: new Date(eventRes.data.end.dateTime),
+        },
+      });
+      response.code(200);
+      return response;
+    }
+
+    if (activityRes.exists) {
+      const response = h.response({
+        data: {
+          type: 'user_activity',
+          id: activityRes.data.activityId,
+          summary: activityRes.data.activityName,
+          description: activityRes.data.description,
+          startTime: new Date(activityRes.data.startTime.seconds * 1000),
+          endTime: new Date(activityRes.data.endTime.seconds * 1000),
+        },
+      });
+      response.code(200);
+      return response;
+    }
+
+    const response = h.response({
+      message: 'event activity not found',
+    });
+    response.code(404);
+    return response;
+  } catch (err) {
+    const response = h.response({
+      message: err.message,
+    });
+    response.code(500);
+    return response;
+  }
+};
+
 module.exports = {
   getAllPersonalEventsHandler,
   getAllPersonalEventActivitiesHandler,
   getAllGroupEventsHandler,
   getAllGroupEventActivitiesHandler,
+  getEventById,
+  getEventActivityById,
 };

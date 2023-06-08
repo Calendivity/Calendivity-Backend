@@ -4,6 +4,8 @@ const {
   getAllPersonalEventActivitiesHandler,
   getAllGroupEventsHandler,
   getAllGroupEventActivitiesHandler,
+  getEventById,
+  getEventActivityById,
 } = require('../handlers/calendarHandler');
 
 const calendarRoute = [
@@ -37,6 +39,22 @@ const calendarRoute = [
     options: {
       pre: [{method: verifyGoogle}],
       handler: getAllGroupEventActivitiesHandler,
+    },
+  },
+  {
+    method: 'GET',
+    path: '/events/{eventId}',
+    options: {
+      pre: [{method: verifyGoogle}],
+      handler: getEventById,
+    },
+  },
+  {
+    method: 'GET',
+    path: '/eventactivities/{eventActivityId}',
+    options: {
+      pre: [{method: verifyGoogle}],
+      handler: getEventActivityById,
     },
   },
 ];
