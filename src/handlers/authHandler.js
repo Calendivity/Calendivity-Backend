@@ -1,6 +1,5 @@
 const {db} = require('../../firestore');
 const axios = require('axios');
-const Boom = require('@hapi/boom');
 const {GeoPoint} = require('@google-cloud/firestore');
 const {google} = require('googleapis');
 
@@ -14,16 +13,16 @@ const authorize = async () => {
 };
 
 const authHandler = async (request, h) => {
-  const {code} = request.query;
-  if (!code) {
-    const response = h.response({
-      message: 'missing query parameter: code',
-    });
-    response.code(400);
-    return response;
-  }
-
   try {
+    const {code} = request.query;
+    if (!code) {
+      const response = h.response({
+        message: 'missing query parameter: code',
+      });
+      response.code(400);
+      return response;
+    }
+
     const oauth2Client = await authorize();
     const {tokens} = await oauth2Client.getToken(code);
     oauth2Client.setCredentials(tokens);
@@ -65,17 +64,29 @@ const authHandler = async (request, h) => {
 };
 
 const tokenRefreshHandler = async (request, h) => {
-  if (!request.payload) {
-    throw Boom.badRequest('bad request');
-  }
-  const {accessToken, refreshToken} = request.payload;
-
   try {
+    const {accessToken, refreshToken} = request.payload;
+
+    if (!accessToken || !refreshToken) {
+      const response = h.response({
+        message: 'bad request',
+      });
+      response.code(400);
+      return response;
+    }
+
     await axios.get(
       `https://oauth2.googleapis.com/tokeninfo?access_token=${accessToken}`,
     );
-    return {access_token: accessToken};
+
+    const response = h.response({
+      access_token: accessToken,
+    });
+    response.code(200);
+    return response;
   } catch (err) {
+    const {refreshToken} = request.payload;
+
     if (err.response.status === 400) {
       try {
         const oauth2Client = await authorize();
@@ -89,8 +100,9 @@ const tokenRefreshHandler = async (request, h) => {
         return response;
       }
     }
+
     const response = h.response({
-      message: err.response.data,
+      message: err.message,
     });
     response.code(500);
     return response;

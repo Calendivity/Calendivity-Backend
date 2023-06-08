@@ -4,24 +4,11 @@ const {Timestamp} = require('@google-cloud/firestore');
 const createGroupActivityHandler = async (request, h) => {
   try {
     const {groupId} = request.params;
-    const {
-      activityName,
-      description,
-      startTime,
-      endTime,
-      finishTime,
-      isFinish,
-    } = request.payload;
+    const {activityName, description, startTime, endTime, finishTime} =
+      request.payload;
 
     // check request body paylaod
-    if (
-      !activityName ||
-      !description ||
-      !startTime ||
-      !endTime ||
-      !finishTime ||
-      isFinish === undefined
-    ) {
+    if (!activityName || !description || !startTime || !endTime) {
       const response = h.response({
         message: 'bad request',
       });
@@ -41,12 +28,15 @@ const createGroupActivityHandler = async (request, h) => {
 
     const groupActivitiesRef = await db.collection('groupActivities');
     const groupActivityRes = await groupActivitiesRef.add({
-      groupId,
-      activityName,
+      groupId: groupId,
+      activityName: activityName,
+      description: description,
       startTime: Timestamp.fromDate(new Date(startTime)),
       endTime: Timestamp.fromDate(new Date(endTime)),
-      finishTime: Timestamp.fromDate(new Date(finishTime)),
-      isFinish,
+      finishTime:
+        finishTime !== undefined
+          ? Timestamp.fromDate(new Date(finishTime))
+          : null,
     });
     groupActivitiesRef.doc(groupActivityRes.id).update({
       activityId: groupActivityRes.id,
@@ -94,10 +84,15 @@ const getAllGroupActivitiesHandler = async (request, h) => {
         .get();
       groupActivitiesResByName.forEach((doc) => {
         groupActivities.push({
-          ...doc.data(),
+          activityId: doc.data().activityId,
+          activityName: doc.data().activityName,
+          description: doc.data().description,
           startTime: new Date(doc.data().startTime.seconds * 1000),
           endTime: new Date(doc.data().endTime.seconds * 1000),
-          finishTime: new Date(doc.data().finishTime.seconds * 1000),
+          finishTime:
+            doc.data().finishTime !== null
+              ? new Date(doc.data().finishTime.seconds * 1000)
+              : null,
         });
       });
 
@@ -114,15 +109,19 @@ const getAllGroupActivitiesHandler = async (request, h) => {
       .get();
     groupActivitiesRes.forEach((doc) => {
       groupActivities.push({
-        ...doc.data(),
+        activityId: doc.data().activityId,
+        activityName: doc.data().activityName,
+        description: doc.data().description,
         startTime: new Date(doc.data().startTime.seconds * 1000),
         endTime: new Date(doc.data().endTime.seconds * 1000),
-        finishTime: new Date(doc.data().finishTime.seconds * 1000),
+        finishTime:
+          doc.data().finishTime !== null
+            ? new Date(doc.data().finishTime.seconds * 1000)
+            : null,
       });
     });
 
     const response = h.response({
-      message: 'oke',
       data: groupActivities,
     });
     response.code(200);
@@ -163,12 +162,16 @@ const getGroupActivityHandler = async (request, h) => {
     }
 
     const response = h.response({
-      message: 'oke',
       data: {
-        ...groupActivity.data(),
+        activityId: groupActivity.data().activityId,
+        activityName: groupActivity.data().activityName,
+        description: groupActivity.data().description,
         startTime: new Date(groupActivity.data().startTime.seconds * 1000),
         endTime: new Date(groupActivity.data().endTime.seconds * 1000),
-        finishTime: new Date(groupActivity.data().finishTime.seconds * 1000),
+        finishTime:
+          groupActivity.data().finishTime !== null
+            ? new Date(groupActivity.data().finishTime.seconds * 1000)
+            : null,
       },
     });
     response.code(200);

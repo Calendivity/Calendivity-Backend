@@ -62,11 +62,14 @@ const getAllUserChallengeHandler = async (request, h) => {
     // get all user challenges
     const userChallengesSnap = await userChallengesRef.get();
     userChallengesSnap.forEach((doc) => {
-      userChallenges.push(doc.data());
+      userChallenges.push({
+        userChallengeId: doc.data().userChallengeId,
+        challengeId: doc.data().challengeId,
+        points: doc.data().points,
+      });
     });
 
     const response = h.response({
-      message: 'oke',
       data: userChallenges,
     });
     response.code(200);
@@ -98,8 +101,11 @@ const getUserChallengeHandler = async (request, h) => {
     }
 
     const response = h.response({
-      message: 'oke',
-      data: userChallenge.data(),
+      data: {
+        userChallengeId: userChallenge.data().userChallengeId,
+        challengeId: userChallenge.data().challengeId,
+        points: userChallenge.data().points,
+      },
     });
     response.code(200);
     return response;
@@ -115,10 +121,10 @@ const getUserChallengeHandler = async (request, h) => {
 const updateUserChallengeHandler = async (request, h) => {
   try {
     const {userChallengeId} = request.params;
-    const {challengeId, points} = request.payload;
+    const {points} = request.payload;
 
     // check request body paylaod
-    if (!challengeId && !points) {
+    if (!points) {
       const response = h.response({
         message: 'no content',
       });
@@ -141,22 +147,6 @@ const updateUserChallengeHandler = async (request, h) => {
 
     // check undefined properties
     const updatedUserChallenge = {};
-    if (challengeId) {
-      // get a challenge from chellenges collection by challengeId
-      const challengesRef = await db.collection('challenges');
-      const challenge = await challengesRef.doc(challengeId).get();
-
-      // check if challenge exists
-      if (!challenge.exists) {
-        const response = h.response({
-          message: 'challenge not found',
-        });
-        response.code(404);
-        return response;
-      }
-
-      updatedUserChallenge.challengeId = challengeId;
-    }
     if (points) {
       updatedUserChallenge.points = points;
     }

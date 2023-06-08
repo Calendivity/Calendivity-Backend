@@ -1,36 +1,41 @@
 const {db} = require('../../firestore');
 const axios = require('axios');
-const Boom = require('@hapi/boom');
 
-const getPersonalEventsHandler = (request, h) => {
-  const config = {
-    headers: {Authorization: request.headers.authorization},
-  };
+const getAllPersonalEventsHandler = async (request, h) => {
+  try {
+    const config = {
+      headers: {Authorization: request.headers.authorization},
+    };
 
-  // make string query for axios
-  const dateMin = new Date().toISOString();
-  let query = `timeMin=${dateMin}&orderBy=startTime&singleEvents=true`;
-  for (const q in request.query) {
-    query += '&' + q + '=' + request.query[q];
-  }
-  const calendarId = request.authUser.email;
+    // make string query for axios
+    const dateMin = new Date().toISOString();
+    let query = `timeMin=${dateMin}&orderBy=startTime&singleEvents=true`;
+    for (const q in request.query) {
+      query += '&' + q + '=' + request.query[q];
+    }
+    const calendarId = request.authUser.email;
 
-  // execute axios and return user events array
-  return axios
-    .get(
+    // execute axios and return user events array
+    const eventsRes = await axios.get(
       `https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events?${query}`,
       config,
-    )
-    .then((res) => {
-      const response = h.response(res.data);
-      return response;
-    })
-    .catch((err) => {
-      throw Boom.internal(err.message);
+    );
+
+    const response = h.response({
+      data: eventsRes.data.items,
     });
+    response.code(200);
+    return response;
+  } catch (err) {
+    const response = h.response({
+      message: err.message,
+    });
+    response.code(500);
+    return response;
+  }
 };
 
-const getPersonalEventActivitiesHandler = async (request, h) => {
+const getAllPersonalEventActivitiesHandler = async (request, h) => {
   try {
     const config = {
       headers: {Authorization: request.headers.authorization},
@@ -89,7 +94,9 @@ const getPersonalEventActivitiesHandler = async (request, h) => {
       (a, b) => new Date(a.startTime) - new Date(b.startTime),
     );
 
-    const response = h.response(userEventActivities);
+    const response = h.response({
+      data: userEventActivities,
+    });
     response.code(200);
     return response;
   } catch (err) {
@@ -101,54 +108,63 @@ const getPersonalEventActivitiesHandler = async (request, h) => {
   }
 };
 
-const getGroupEventsHandler = async (request, h) => {
-  const config = {
-    headers: {Authorization: request.headers.authorization},
-  };
+const getAllGroupEventsHandler = async (request, h) => {
+  try {
+    const config = {
+      headers: {Authorization: request.headers.authorization},
+    };
 
-  // get users from membership firestore collection based on groupId
-  const {groupId} = request.params;
-  const groupsRef = await db.collection('memberships');
-  const snapshot = await groupsRef.where('groupId', '==', groupId).get();
+    // get users from membership firestore collection based on groupId
+    const {groupId} = request.params;
+    const groupsRef = await db.collection('memberships');
+    const snapshot = await groupsRef.where('groupId', '==', groupId).get();
 
-  const users = [];
-  snapshot.forEach((doc) => {
-    users.push(doc.data().userId);
-  });
-
-  // make string query for axios
-  const dateMin = new Date().toISOString();
-  let query = `timeMin=${dateMin}&orderBy=startTime&singleEvents=true`;
-  for (const q in request.query) {
-    query += '&' + q + '=' + request.query[q];
-  }
-
-  // execute axios from users array and return the user events array from same group
-  return axios
-    .all(
-      users.map((calendarId) =>
-        axios.get(
-          `https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events?${query}`,
-          config,
-        ),
-      ),
-    )
-    .then((responses) => {
-      const userEvents = [];
-      responses.forEach((response) => {
-        const summary = response.data.summary;
-        response.data.items.forEach((item) => {
-          userEvents.push({
-            user: summary,
-            ...item,
-          });
-        });
-      });
-      return userEvents;
+    const users = [];
+    snapshot.forEach((doc) => {
+      users.push(doc.data().userId);
     });
+
+    // make string query for axios
+    const dateMin = new Date().toISOString();
+    let query = `timeMin=${dateMin}&orderBy=startTime&singleEvents=true`;
+    for (const q in request.query) {
+      query += '&' + q + '=' + request.query[q];
+    }
+
+    // execute axios from users array and return the user events array from same group
+    const groupEvents = [];
+    const eventsRes = await axios.all(
+      users.map(async (user) => {
+        return await axios.get(
+          `https://www.googleapis.com/calendar/v3/calendars/${user}/events?${query}`,
+          config,
+        );
+      }),
+    );
+    for (const userEvents of eventsRes) {
+      for (const event of userEvents.data.items) {
+        groupEvents.push({
+          user: userEvents.data.summary,
+          ...event,
+        });
+      }
+    }
+
+    const response = h.response({
+      data: groupEvents,
+    });
+    response.code(200);
+    return response;
+  } catch (err) {
+    const response = h.response({
+      message: err.message,
+    });
+    response.code(500);
+    return response;
+  }
 };
 
-const getGroupEventActivitiesHandler = async (request, h) => {
+const getAllGroupEventActivitiesHandler = async (request, h) => {
   try {
     const config = {
       headers: {Authorization: request.headers.authorization},
@@ -171,17 +187,21 @@ const getGroupEventActivitiesHandler = async (request, h) => {
       query += '&' + q + '=' + request.query[q];
     }
 
+    // get group user events from google calendar api
     const groupEvents = [];
-    for (const userId of users) {
-      const eventResponses = await axios.get(
-        `https://www.googleapis.com/calendar/v3/calendars/${userId}/events?${query}`,
-        config,
-      );
-      const userEventsRes = eventResponses.data.items;
-      for (const event of userEventsRes) {
+    const eventsRes = await axios.all(
+      users.map(async (user) => {
+        return await axios.get(
+          `https://www.googleapis.com/calendar/v3/calendars/${user}/events?${query}`,
+          config,
+        );
+      }),
+    );
+    for (const userEvents of eventsRes) {
+      for (const event of userEvents.data.items) {
         groupEvents.push({
           type: 'calendar_event',
-          user: userId,
+          user: userEvents.data.summary,
           id: event.id,
           summary: event.summary,
           description: event.description,
@@ -191,6 +211,7 @@ const getGroupEventActivitiesHandler = async (request, h) => {
       }
     }
 
+    // get user group activities from userActivities collection
     const groupActivities = [];
     for (const userId of users) {
       const userActivitiesRef = await db.collection('userActivities');
@@ -220,7 +241,9 @@ const getGroupEventActivitiesHandler = async (request, h) => {
       (a, b) => new Date(a.startTime) - new Date(b.startTime),
     );
 
-    const response = h.response(groupEventActivities);
+    const response = h.response({
+      data: groupEventActivities,
+    });
     response.code(200);
     return response;
   } catch (err) {
@@ -233,8 +256,8 @@ const getGroupEventActivitiesHandler = async (request, h) => {
 };
 
 module.exports = {
-  getPersonalEventsHandler,
-  getPersonalEventActivitiesHandler,
-  getGroupEventsHandler,
-  getGroupEventActivitiesHandler,
+  getAllPersonalEventsHandler,
+  getAllPersonalEventActivitiesHandler,
+  getAllGroupEventsHandler,
+  getAllGroupEventActivitiesHandler,
 };

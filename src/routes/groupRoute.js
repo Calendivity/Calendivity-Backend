@@ -4,7 +4,7 @@ const {
   getGroupHandler,
   updateGroupHandler,
   deleteGroupHandler,
-  getGroupUsersHandler,
+  getAllGroupUsersHandler,
   inviteToGroupHandler,
   removeFromGroupHandler,
 } = require('../handlers/groupHandler');
@@ -47,11 +47,11 @@ const groupRoute = [
     path: '/groups/{groupId}/users',
     options: {
       pre: [{method: verifyGoogle}],
-      handler: getGroupUsersHandler,
+      handler: getAllGroupUsersHandler,
     },
   },
   {
-    method: 'PUT',
+    method: 'POST',
     path: '/groups/{groupId}/users',
     options: {
       pre: [{method: verifyGoogle}],

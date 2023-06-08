@@ -27,7 +27,7 @@ const createChallengeHandler = async (request, h) => {
     challengesRef.doc(challengeSnap.id).update({challengeId: challengeSnap.id});
 
     const response = h.response({
-      message: 'oke',
+      message: 'challenge successfully created',
       data: {challengeId: challengeSnap.id},
     });
     response.code(201);
@@ -56,14 +56,16 @@ const getAllChallengesHandler = async (request, h) => {
         .get();
       challengesByName.forEach((doc) => {
         challenges.push({
-          ...doc.data(),
+          challengeId: doc.data().challengeId,
+          challengeName: doc.data().challengeName,
+          description: doc.data().description,
+          goals: doc.data().goals,
           startTime: new Date(doc.data().startTime.seconds * 1000),
           endTime: new Date(doc.data().endTime.seconds * 1000),
         });
       });
 
       const response = h.response({
-        message: 'oke',
         data: challenges,
       });
       response.code(200);
@@ -74,14 +76,16 @@ const getAllChallengesHandler = async (request, h) => {
     const challengesSnap = await challengesRef.get();
     challengesSnap.forEach((doc) => {
       challenges.push({
-        ...doc.data(),
+        challengeId: doc.data().challengeId,
+        challengeName: doc.data().challengeName,
+        description: doc.data().description,
+        goals: doc.data().goals,
         startTime: new Date(doc.data().startTime.seconds * 1000),
         endTime: new Date(doc.data().endTime.seconds * 1000),
       });
     });
 
     const response = h.response({
-      message: 'oke',
       data: challenges,
     });
     response.code(200);
@@ -113,9 +117,11 @@ const getChallengeHandler = async (request, h) => {
     }
 
     const response = h.response({
-      message: 'oke',
       data: {
-        ...challenge.data(),
+        challengeId: challenge.data().challengeId,
+        challengeName: challenge.data().challengeName,
+        description: challenge.data().description,
+        goals: challenge.data().goals,
         startTime: new Date(challenge.data().startTime.seconds * 1000),
         endTime: new Date(challenge.data().endTime.seconds * 1000),
       },
@@ -134,7 +140,7 @@ const getChallengeHandler = async (request, h) => {
 const updateChallengeHandler = async (request, h) => {
   try {
     const {challengeId} = request.params;
-    const {challengeName, description, goals, points, startTime, endTime} =
+    const {challengeName, description, goals, startTime, endTime} =
       request.payload;
 
     // check request body paylaod
@@ -142,7 +148,6 @@ const updateChallengeHandler = async (request, h) => {
       !challengeName &&
       !description &&
       !goals &&
-      !points &&
       !startTime &&
       !endTime
     ) {
@@ -176,9 +181,6 @@ const updateChallengeHandler = async (request, h) => {
     }
     if (goals) {
       updatedChallenge.goals = goals;
-    }
-    if (points) {
-      updatedChallenge.points = points;
     }
     if (startTime) {
       updatedChallenge.startTime = Timestamp.fromDate(new Date(startTime));

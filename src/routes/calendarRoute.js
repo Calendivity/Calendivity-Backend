@@ -1,9 +1,9 @@
 const {verifyGoogle} = require('../middleware');
 const {
-  getPersonalEventsHandler,
-  getPersonalEventActivitiesHandler,
-  getGroupEventsHandler,
-  getGroupEventActivitiesHandler,
+  getAllPersonalEventsHandler,
+  getAllPersonalEventActivitiesHandler,
+  getAllGroupEventsHandler,
+  getAllGroupEventActivitiesHandler,
 } = require('../handlers/calendarHandler');
 
 const calendarRoute = [
@@ -12,7 +12,7 @@ const calendarRoute = [
     path: '/users/events',
     options: {
       pre: [{method: verifyGoogle}],
-      handler: getPersonalEventsHandler,
+      handler: getAllPersonalEventsHandler,
     },
   },
   {
@@ -20,7 +20,7 @@ const calendarRoute = [
     path: '/users/eventactivities',
     options: {
       pre: [{method: verifyGoogle}],
-      handler: getPersonalEventActivitiesHandler,
+      handler: getAllPersonalEventActivitiesHandler,
     },
   },
   {
@@ -28,7 +28,7 @@ const calendarRoute = [
     path: '/groups/{groupId}/events',
     options: {
       pre: [{method: verifyGoogle}],
-      handler: getGroupEventsHandler,
+      handler: getAllGroupEventsHandler,
     },
   },
   {
@@ -36,7 +36,7 @@ const calendarRoute = [
     path: '/groups/{groupId}/eventactivities',
     options: {
       pre: [{method: verifyGoogle}],
-      handler: getGroupEventActivitiesHandler,
+      handler: getAllGroupEventActivitiesHandler,
     },
   },
 ];

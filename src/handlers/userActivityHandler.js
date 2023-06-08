@@ -4,24 +4,12 @@ const {db} = require('../../firestore');
 
 const createUserActivityHandler = async (request, h) => {
   try {
-    const {
-      activityName,
-      description,
-      startTime,
-      endTime,
-      isFinish,
-      finishTime,
-    } = request.payload;
+    const {activityName, description, startTime, endTime, finishTime} =
+      request.payload;
     const userId = request.authUser.email;
+
     // check request body payload
-    if (
-      !activityName ||
-      !description ||
-      !startTime ||
-      !endTime ||
-      !finishTime ||
-      isFinish === undefined
-    ) {
+    if (!activityName || !description || !startTime || !endTime) {
       const response = h.response({
         message: 'bad request',
       });
@@ -36,8 +24,10 @@ const createUserActivityHandler = async (request, h) => {
       description: description,
       startTime: Timestamp.fromDate(new Date(startTime)),
       endTime: Timestamp.fromDate(new Date(endTime)),
-      finishTime: Timestamp.fromDate(new Date(finishTime)),
-      isFinish: isFinish,
+      finishTime:
+        finishTime !== undefined
+          ? Timestamp.fromDate(new Date(finishTime))
+          : null,
     });
     // update the activities id property
     db.collection('userActivities').doc(activitiesRes.id).update({
@@ -45,13 +35,78 @@ const createUserActivityHandler = async (request, h) => {
     });
 
     const response = h.response({
-      message: `activity ${activityName} successfully created`,
+      message: 'activity successfully created',
       data: {
         activityId: activitiesRes.id,
-        activityName: activityName,
       },
     });
     response.code(201);
+    return response;
+  } catch (err) {
+    const response = h.response({
+      message: err.message,
+    });
+    response.code(500);
+    return response;
+  }
+};
+
+const getAllUserActivitiesHandler = async (request, h) => {
+  try {
+    const {name} = request.query;
+    const userId = request.authUser.email;
+
+    const userActivities = [];
+    const userActivitiesRef = await db.collection('userActivities');
+
+    if (name) {
+      const userActivitiesResByName = await userActivitiesRef
+        .where('activityName', '>=', name)
+        .where('activityName', '<=', name + '\uf8ff')
+        .get();
+      userActivitiesResByName.forEach((doc) => {
+        userActivities.push({
+          activityId: doc.data().activityId,
+          activityName: doc.data().activityName,
+          description: doc.data().description,
+          startTime: new Date(doc.data().startTime.seconds * 1000),
+          endTime: new Date(doc.data().endTime.seconds * 1000),
+          finishTime:
+            doc.data().finishTime !== null
+              ? new Date(doc.data().finishTime.seconds * 1000)
+              : null,
+        });
+      });
+
+      const response = h.response({
+        message: 'oke',
+        data: userActivities,
+      });
+      response.code(200);
+      return response;
+    }
+
+    const userActivitiesRes = await userActivitiesRef
+      .where('userId', '==', userId)
+      .get();
+    userActivitiesRes.forEach((doc) => {
+      userActivities.push({
+        activityId: doc.data().activityId,
+        activityName: doc.data().activityName,
+        description: doc.data().description,
+        startTime: new Date(doc.data().startTime.seconds * 1000),
+        endTime: new Date(doc.data().endTime.seconds * 1000),
+        finishTime:
+          doc.data().finishTime !== null
+            ? new Date(doc.data().finishTime.seconds * 1000)
+            : null,
+      });
+    });
+
+    const response = h.response({
+      data: userActivities,
+    });
+    response.code(200);
     return response;
   } catch (err) {
     const response = h.response({
@@ -80,70 +135,17 @@ const getUserActivityHandler = async (request, h) => {
     }
 
     const response = h.response({
-      message: 'Activity is successfully required',
       data: {
-        ...userActivity.data(),
+        activityId: userActivity.data().activityId,
+        activityName: userActivity.data().activityName,
+        description: userActivity.data().description,
         startTime: new Date(userActivity.data().startTime.seconds * 1000),
         endTime: new Date(userActivity.data().endTime.seconds * 1000),
-        finishTime: new Date(userActivity.data().finishTime.seconds * 1000),
+        finishTime:
+          userActivity.data().finishTime !== null
+            ? new Date(userActivity.data().finishTime.seconds * 1000)
+            : null,
       },
-    });
-    response.code(200);
-    return response;
-  } catch (err) {
-    const response = h.response({
-      message: err.message,
-    });
-    response.code(500);
-    return response;
-  }
-};
-
-const getAllUserActivitiesHandler = async (request, h) => {
-  try {
-    const {name} = request.query;
-    const userId = request.authUser.email;
-
-    const userActivities = [];
-    const userActivitiesRef = await db.collection('userActivities');
-
-    if (name) {
-      const userActivitiesResByName = await userActivitiesRef
-        .where('activityName', '>=', name)
-        .where('activityName', '<=', name + '\uf8ff')
-        .get();
-      userActivitiesResByName.forEach((doc) => {
-        userActivities.push({
-          ...doc.data(),
-          startTime: new Date(doc.data().startTime.seconds * 1000),
-          endTime: new Date(doc.data().endTime.seconds * 1000),
-          finishTime: new Date(doc.data().finishTime.seconds * 1000),
-        });
-      });
-
-      const response = h.response({
-        message: 'oke',
-        data: userActivities,
-      });
-      response.code(200);
-      return response;
-    }
-
-    const userActivitiesRes = await userActivitiesRef
-      .where('userId', '==', userId)
-      .get();
-    userActivitiesRes.forEach((doc) => {
-      userActivities.push({
-        ...doc.data(),
-        startTime: new Date(doc.data().startTime.seconds * 1000),
-        endTime: new Date(doc.data().endTime.seconds * 1000),
-        finishTime: new Date(doc.data().finishTime.seconds * 1000),
-      });
-    });
-
-    const response = h.response({
-      message: 'All activity is successfully required',
-      data: userActivities,
     });
     response.code(200);
     return response;
@@ -159,14 +161,8 @@ const getAllUserActivitiesHandler = async (request, h) => {
 const updateUserActivityHandler = async (request, h) => {
   try {
     const {activityId} = request.params;
-    const {
-      activityName,
-      description,
-      startTime,
-      endTime,
-      finishTime,
-      isFinish,
-    } = request.payload;
+    const {activityName, description, startTime, endTime, finishTime} =
+      request.payload;
 
     // check request body payload
     if (
@@ -174,8 +170,7 @@ const updateUserActivityHandler = async (request, h) => {
       !description &&
       !startTime &&
       !endTime &&
-      !finishTime &&
-      isFinish === undefined
+      !finishTime
     ) {
       const response = h.response({
         message: 'no content',
@@ -213,9 +208,6 @@ const updateUserActivityHandler = async (request, h) => {
     if (finishTime) {
       updatedActivity.finishTime = Timestamp.fromDate(new Date(finishTime));
     }
-    if (isFinish !== undefined) {
-      updatedActivity.isFinish = isFinish;
-    }
 
     userActivitiesRef.doc(activityId).update(updatedActivity);
 
@@ -252,7 +244,7 @@ const deleteUserActivityHandler = async (request, h) => {
     userActivitiesRef.doc(activityId).delete();
 
     const response = h.response({
-      message: 'user activity successfully deteled',
+      message: 'user activity successfully deleted',
     });
     response.code(200);
     return response;
@@ -266,8 +258,8 @@ const deleteUserActivityHandler = async (request, h) => {
 };
 module.exports = {
   createUserActivityHandler,
-  getUserActivityHandler,
   getAllUserActivitiesHandler,
+  getUserActivityHandler,
   updateUserActivityHandler,
   deleteUserActivityHandler,
 };
