@@ -1,7 +1,16 @@
 require('dotenv').config();
 const Hapi = require('@hapi/hapi');
 const Inert = require('@hapi/inert');
-const routes = require('./routes');
+
+const authRoute = require('./routes/authRoute');
+const userRoute = require('./routes/userRoute');
+const userActivityRoute = require('./routes/userActivityRoute');
+const userChallengeRoute = require('./routes/userChallengeRoute');
+const groupRoute = require('./routes/groupRoute');
+const groupActivityRoute = require('./routes/groupActivityRoute');
+const challengeRoute = require('./routes/challengeRoute');
+const calendarRoute = require('./routes/calendarRoute');
+const placeRoute = require('./routes/placeRoute');
 
 const init = async () => {
   const server = Hapi.server({
@@ -16,7 +25,15 @@ const init = async () => {
   await server.register(Inert);
 
   server.route([
-    ...routes,
+    ...authRoute,
+    ...userRoute,
+    ...userActivityRoute,
+    ...userChallengeRoute,
+    ...groupRoute,
+    ...groupActivityRoute,
+    ...challengeRoute,
+    ...calendarRoute,
+    ...placeRoute,
     {
       method: 'GET',
       path: '/openapi.json',
