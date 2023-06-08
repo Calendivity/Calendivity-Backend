@@ -1,4 +1,4 @@
-const {verifyGoogle} = require('../middleware');
+const {verifyGoogle, verifyGroup} = require('../middleware');
 const {
   getAllPersonalEventsHandler,
   getAllPersonalEventActivitiesHandler,
@@ -29,7 +29,7 @@ const calendarRoute = [
     method: 'GET',
     path: '/groups/{groupId}/events',
     options: {
-      pre: [{method: verifyGoogle}],
+      pre: [{method: verifyGoogle}, {method: verifyGroup}],
       handler: getAllGroupEventsHandler,
     },
   },
@@ -37,7 +37,7 @@ const calendarRoute = [
     method: 'GET',
     path: '/groups/{groupId}/eventactivities',
     options: {
-      pre: [{method: verifyGoogle}],
+      pre: [{method: verifyGoogle}, {method: verifyGroup}],
       handler: getAllGroupEventActivitiesHandler,
     },
   },

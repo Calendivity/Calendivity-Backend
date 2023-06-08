@@ -1,4 +1,4 @@
-const {verifyGoogle} = require('../middleware');
+const {verifyGoogle, verifyGroup} = require('../middleware');
 const {
   createGroupHandler,
   getGroupHandler,
@@ -22,7 +22,7 @@ const groupRoute = [
     method: 'GET',
     path: '/groups/{groupId}',
     options: {
-      pre: [{method: verifyGoogle}],
+      pre: [{method: verifyGoogle}, {method: verifyGroup}],
       handler: getGroupHandler,
     },
   },
@@ -30,7 +30,7 @@ const groupRoute = [
     method: 'PUT',
     path: '/groups/{groupId}',
     options: {
-      pre: [{method: verifyGoogle}],
+      pre: [{method: verifyGoogle}, {method: verifyGroup}],
       handler: updateGroupHandler,
     },
   },
@@ -38,7 +38,7 @@ const groupRoute = [
     method: 'DELETE',
     path: '/groups/{groupId}',
     options: {
-      pre: [{method: verifyGoogle}],
+      pre: [{method: verifyGoogle}, {method: verifyGroup}],
       handler: deleteGroupHandler,
     },
   },
@@ -46,7 +46,7 @@ const groupRoute = [
     method: 'GET',
     path: '/groups/{groupId}/users',
     options: {
-      pre: [{method: verifyGoogle}],
+      pre: [{method: verifyGoogle}, {method: verifyGroup}],
       handler: getAllGroupUsersHandler,
     },
   },
@@ -54,7 +54,7 @@ const groupRoute = [
     method: 'POST',
     path: '/groups/{groupId}/users',
     options: {
-      pre: [{method: verifyGoogle}],
+      pre: [{method: verifyGoogle}, {method: verifyGroup}],
       handler: inviteToGroupHandler,
     },
   },
@@ -62,7 +62,7 @@ const groupRoute = [
     method: 'DELETE',
     path: '/groups/{groupId}/users',
     options: {
-      pre: [{method: verifyGoogle}],
+      pre: [{method: verifyGoogle}, {method: verifyGroup}],
       handler: removeFromGroupHandler,
     },
   },

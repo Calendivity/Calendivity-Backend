@@ -1,4 +1,4 @@
-const {verifyGoogle} = require('../middleware');
+const {verifyGoogle, verifyGroup} = require('../middleware');
 const {
   createGroupActivityHandler,
   getAllGroupActivitiesHandler,
@@ -12,7 +12,7 @@ const groupActivityRoute = [
     method: 'POST',
     path: '/groups/{groupId}/activities',
     options: {
-      pre: [{method: verifyGoogle}],
+      pre: [{method: verifyGoogle}, {method: verifyGroup}],
       handler: createGroupActivityHandler,
     },
   },
@@ -20,7 +20,7 @@ const groupActivityRoute = [
     method: 'GET',
     path: '/groups/{groupId}/activities',
     options: {
-      pre: [{method: verifyGoogle}],
+      pre: [{method: verifyGoogle}, {method: verifyGroup}],
       handler: getAllGroupActivitiesHandler,
     },
   },
@@ -28,7 +28,7 @@ const groupActivityRoute = [
     method: 'GET',
     path: '/groups/{groupId}/activities/{activityId}',
     options: {
-      pre: [{method: verifyGoogle}],
+      pre: [{method: verifyGoogle}, {method: verifyGroup}],
       handler: getGroupActivityHandler,
     },
   },
@@ -36,7 +36,7 @@ const groupActivityRoute = [
     method: 'PUT',
     path: '/groups/{groupId}/activities/{activityId}',
     options: {
-      pre: [{method: verifyGoogle}],
+      pre: [{method: verifyGoogle}, {method: verifyGroup}],
       handler: updateGroupActivityHandler,
     },
   },
@@ -44,7 +44,7 @@ const groupActivityRoute = [
     method: 'DELETE',
     path: '/groups/{groupId}/activities/{activityId}',
     options: {
-      pre: [{method: verifyGoogle}],
+      pre: [{method: verifyGoogle}, {method: verifyGroup}],
       handler: deleteGroupActivityHandler,
     },
   },

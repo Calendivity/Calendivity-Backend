@@ -78,15 +78,6 @@ const getGroupHandler = async (request, h) => {
     const groupRef = await db.collection('groups');
     const groupSnapshot = await groupRef.doc(groupId).get();
 
-    // check the group is available
-    if (!groupSnapshot.exists) {
-      const response = h.response({
-        message: `group ${groupId} is not exist`,
-      });
-      response.code(400);
-      return response;
-    }
-
     const response = h.response({
       data: {
         groupId: groupSnapshot.data().groupId,
@@ -112,16 +103,6 @@ const updateGroupHandler = async (request, h) => {
     const {groupName, description} = request.payload;
 
     const groupRef = await db.collection('groups');
-    const groupSnapshot = await groupRef.doc(groupId).get();
-
-    // check the group is available
-    if (!groupSnapshot.exists) {
-      const response = h.response({
-        message: `group ${groupId} is not exist`,
-      });
-      response.code(400);
-      return response;
-    }
 
     // check the updater should be an admin
     const membershipRef = await db.collection('memberships');
@@ -169,16 +150,6 @@ const deleteGroupHandler = async (request, h) => {
     const {groupId} = request.params;
 
     const groupRef = await db.collection('groups');
-    const groupSnapshot = await groupRef.doc(groupId).get();
-
-    // check the group is available
-    if (!groupSnapshot.exists) {
-      const response = h.response({
-        message: `group ${groupId} is not exist`,
-      });
-      response.code(400);
-      return response;
-    }
 
     // check the deleter should be an admin
     const membershipRef = await db.collection('memberships');

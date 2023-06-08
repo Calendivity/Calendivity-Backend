@@ -16,16 +16,6 @@ const createGroupActivityHandler = async (request, h) => {
       return response;
     }
 
-    // check if group exists
-    const groupRes = await db.collection('groups').doc(groupId).get();
-    if (!groupRes.exists) {
-      const response = h.response({
-        message: `group ${groupId} does not exist`,
-      });
-      response.code(404);
-      return response;
-    }
-
     const groupActivitiesRef = await db.collection('groupActivities');
     const groupActivityRes = await groupActivitiesRef.add({
       groupId: groupId,
@@ -63,16 +53,6 @@ const getAllGroupActivitiesHandler = async (request, h) => {
   try {
     const {groupId} = request.params;
     const {name} = request.query;
-
-    // check if group exists
-    const groupRes = await db.collection('groups').doc(groupId).get();
-    if (!groupRes.exists) {
-      const response = h.response({
-        message: `group ${groupId} does not exist`,
-      });
-      response.code(404);
-      return response;
-    }
 
     const groupActivities = [];
     const groupActivitiesRef = await db.collection('groupActivities');
@@ -137,17 +117,7 @@ const getAllGroupActivitiesHandler = async (request, h) => {
 
 const getGroupActivityHandler = async (request, h) => {
   try {
-    const {groupId, activityId} = request.params;
-
-    // check if group exists
-    const groupRes = await db.collection('groups').doc(groupId).get();
-    if (!groupRes.exists) {
-      const response = h.response({
-        message: `group ${groupId} does not exist`,
-      });
-      response.code(404);
-      return response;
-    }
+    const {activityId} = request.params;
 
     const groupActivitiesRef = await db.collection('groupActivities');
     const groupActivity = await groupActivitiesRef.doc(activityId).get();
@@ -187,7 +157,7 @@ const getGroupActivityHandler = async (request, h) => {
 
 const updateGroupActivityHandler = async (request, h) => {
   try {
-    const {groupId, activityId} = request.params;
+    const {activityId} = request.params;
     const {
       activityName,
       description,
@@ -210,16 +180,6 @@ const updateGroupActivityHandler = async (request, h) => {
         message: 'no content',
       });
       response.code(204);
-      return response;
-    }
-
-    // check if group exists
-    const groupRes = await db.collection('groups').doc(groupId).get();
-    if (!groupRes.exists) {
-      const response = h.response({
-        message: `group ${groupId} does not exist`,
-      });
-      response.code(404);
       return response;
     }
 
@@ -274,17 +234,7 @@ const updateGroupActivityHandler = async (request, h) => {
 
 const deleteGroupActivityHandler = async (request, h) => {
   try {
-    const {groupId, activityId} = request.params;
-
-    // check if group exists
-    const groupRes = await db.collection('groups').doc(groupId).get();
-    if (!groupRes.exists) {
-      const response = h.response({
-        message: `group ${groupId} does not exist`,
-      });
-      response.code(404);
-      return response;
-    }
+    const {activityId} = request.params;
 
     const groupActivitiesRef = await db.collection('groupActivities');
     const groupActivity = await groupActivitiesRef.doc(activityId).get();

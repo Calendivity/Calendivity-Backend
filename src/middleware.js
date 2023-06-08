@@ -1,3 +1,4 @@
+const {db} = require('../firestore');
 const axios = require('axios');
 const Boom = require('@hapi/boom');
 
@@ -28,4 +29,27 @@ const verifyGoogle = async (request, h) => {
   }
 };
 
-module.exports = {verifyGoogle};
+const verifyGroup = async (request, h) => {
+  try {
+    const {groupId} = request.params;
+
+    const groupRes = await db.collection('groups').doc(groupId).get();
+    if (!groupRes.exists) {
+      throw Boom.notFound('').output.payload;
+    }
+
+    return h.continue;
+  } catch (err) {
+    if (err.statusCode === 404) {
+      throw Boom.notFound('group does not exists');
+    }
+
+    const response = h.response({
+      message: err.message,
+    });
+    response.code(500);
+    return response;
+  }
+};
+
+module.exports = {verifyGoogle, verifyGroup};
