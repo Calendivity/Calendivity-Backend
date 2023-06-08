@@ -61,14 +61,18 @@ const getAllPlacesByGroupMembersPositionHandler = async (request, h) => {
     const {radius = 1000, keyword = 'meeting room'} = request.query;
 
     // Execute axios and return user events array
-    const response = await axios.get(
+    const placeRes = await axios.get(
       `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${midpointLatitude}%2C${midpointLongitude}&radius=${radius}&keyword=${keyword}&key=${process.env.MAPS_API_KEY}`,
     );
-    return h.response(response.data.results);
-  } catch (error) {
-    console.error('Error:', error);
+
     const response = h.response({
-      message: error.message,
+      data: placeRes.data.results,
+    });
+    response.code(200);
+    return response;
+  } catch (err) {
+    const response = h.response({
+      message: err.message,
     });
     response.code(500);
     return response;
@@ -80,12 +84,12 @@ const getPlaceById = async (request, h) => {
     const {placeId} = request.params;
 
     // get place by place_id from google place api
-    const response = await axios.get(
+    const placeRes = await axios.get(
       `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&key=${process.env.MAPS_API_KEY}`,
     );
 
     // check if place not found
-    if (response.data.status === 'INVALID_REQUEST') {
+    if (placeRes.data.status === 'INVALID_REQUEST') {
       const response = h.response({
         message: 'place not found',
       });
@@ -93,7 +97,11 @@ const getPlaceById = async (request, h) => {
       return response;
     }
 
-    return response.data;
+    const response = h.response({
+      data: placeRes.data,
+    });
+    response.code(200);
+    return response;
   } catch (err) {
     const response = h.response({
       message: err.message,

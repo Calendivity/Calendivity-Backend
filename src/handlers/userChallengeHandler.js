@@ -61,13 +61,18 @@ const getAllUserChallengeHandler = async (request, h) => {
 
     // get all user challenges
     const userChallengesSnap = await userChallengesRef.get();
-    userChallengesSnap.forEach((doc) => {
+    for (const doc of userChallengesSnap.docs) {
+      const challengeSnap = await db
+        .collection('challenges')
+        .doc(doc.data().challengeId)
+        .get();
       userChallenges.push({
         userChallengeId: doc.data().userChallengeId,
         challengeId: doc.data().challengeId,
+        goals: challengeSnap.data().goals,
         points: doc.data().points,
       });
-    });
+    }
 
     const response = h.response({
       data: userChallenges,
@@ -90,6 +95,10 @@ const getUserChallengeHandler = async (request, h) => {
     // get a user challenge from userChellenges collection by userChallengeId
     const userChallengesRef = await db.collection('userChallenges');
     const userChallenge = await userChallengesRef.doc(userChallengeId).get();
+    const challenge = await db
+      .collection('challenges')
+      .doc(userChallenge.data().challengeId)
+      .get();
 
     // check if user challenge exists
     if (!userChallenge.exists) {
@@ -104,6 +113,7 @@ const getUserChallengeHandler = async (request, h) => {
       data: {
         userChallengeId: userChallenge.data().userChallengeId,
         challengeId: userChallenge.data().challengeId,
+        goals: challenge.data().goals,
         points: userChallenge.data().points,
       },
     });

@@ -14,28 +14,36 @@
       "name": "auth"
     },
     {
-      "name": "users"
+      "name": "user"
     },
     {
-      "name": "user activities"
+      "name": "user activity"
     },
     {
-      "name": "user challenges"
+      "name": "user challenge"
     },
     {
-      "name": "groups"
+      "name": "group"
     },
     {
-      "name": "group activities"
+      "name": "group activity"
     },
     {
-      "name": "challenges"
+      "name": "challenge"
+    },
+    {
+      "name": "calendar"
+    },
+    {
+      "name": "place"
     }
   ],
   "paths": {
     "/auth": {
       "get": {
-        "tags": ["auth"],
+        "tags": [
+          "auth"
+        ],
         "summary": "Auth",
         "description": "Authentication to get token",
         "parameters": [
@@ -57,12 +65,24 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "access_token": {"type": "string"},
-                    "refresh_token": {"type": "string"},
-                    "scope": {"type": "string"},
-                    "token_type": {"type": "string"},
-                    "id_token": {"type": "string"},
-                    "expiry_date": {"type": "number"}
+                    "access_token": {
+                      "type": "string"
+                    },
+                    "refresh_token": {
+                      "type": "string"
+                    },
+                    "scope": {
+                      "type": "string"
+                    },
+                    "token_type": {
+                      "type": "string"
+                    },
+                    "id_token": {
+                      "type": "string"
+                    },
+                    "expiry_date": {
+                      "type": "number"
+                    }
                   }
                 }
               }
@@ -73,7 +93,9 @@
     },
     "/tokenrefresh": {
       "post": {
-        "tags": ["auth"],
+        "tags": [
+          "auth"
+        ],
         "summary": "Token refresh",
         "description": "Refresh access_token with refresh_token",
         "requestBody": {
@@ -114,7 +136,9 @@
     },
     "/userinfo": {
       "get": {
-        "tags": ["users"],
+        "tags": [
+          "user"
+        ],
         "summary": "Get user info",
         "description": "Get user info",
         "responses": {
@@ -125,7 +149,1446 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "accessToken": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "email": {
+                          "type": "string"
+                        },
+                        "verified_email": {
+                          "type": "boolean"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "given_name": {
+                          "type": "string"
+                        },
+                        "family_name": {
+                          "type": "string"
+                        },
+                        "picture": {
+                          "type": "string"
+                        },
+                        "locale": {
+                          "type": "string"
+                        },
+                        "hd": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/users/groups": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Get user groups",
+        "description": "Get user groups",
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "groupId": {
+                            "type": "string"
+                          },
+                          "groupName": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/users/activities": {
+      "post": {
+        "tags": [
+          "user activity"
+        ],
+        "summary": "Create a user activity",
+        "description": "Create a user activity",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "activityName": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "startTime": {
+                    "type": "string"
+                  },
+                  "endTime": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "activityId": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "get": {
+        "tags": [
+          "user activity"
+        ],
+        "summary": "Get all user activities",
+        "description": "Get all user activities",
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Activity"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/users/activities/{activityId}": {
+      "get": {
+        "tags": [
+          "user activity"
+        ],
+        "summary": "Get a user activity",
+        "description": "Get a user activity",
+        "parameters": [
+          {
+            "name": "activityId",
+            "in": "path",
+            "description": "activity id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Activity"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "user activity"
+        ],
+        "summary": "Update a user activity",
+        "description": "Update a user activity",
+        "parameters": [
+          {
+            "name": "activityId",
+            "in": "path",
+            "description": "activity id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "activityName": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "startTime": {
+                    "type": "string"
+                  },
+                  "endTime": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "user activity"
+        ],
+        "summary": "Delete a user activity",
+        "description": "Delete a user activity",
+        "parameters": [
+          {
+            "name": "activityId",
+            "in": "path",
+            "description": "activity id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/users/challenges": {
+      "post": {
+        "tags": [
+          "user challenge"
+        ],
+        "summary": "Create a user challenge",
+        "description": "Create a user challenge",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "challengeId": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "userChallengeId": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "get": {
+        "tags": [
+          "user challenge"
+        ],
+        "summary": "Get all user challenges",
+        "description": "Get all user challenges",
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/UserChallenge"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/users/challenges/{userChallengeId}": {
+      "get": {
+        "tags": [
+          "user challenge"
+        ],
+        "summary": "Get a user challenge",
+        "description": "Get a user challenge",
+        "parameters": [
+          {
+            "name": "userChallengeId",
+            "in": "path",
+            "description": "user challenge id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/UserChallenge"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "user challenge"
+        ],
+        "summary": "Update a user challenge",
+        "description": "Update a user challenge",
+        "parameters": [
+          {
+            "name": "userChallengeId",
+            "in": "path",
+            "description": "user challenge id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "points": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "user challenge"
+        ],
+        "summary": "Delete a user challenge",
+        "description": "Delete a user challenge",
+        "parameters": [
+          {
+            "name": "userChallengeId",
+            "in": "path",
+            "description": "user challenge id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/groups": {
+      "post": {
+        "tags": [
+          "group"
+        ],
+        "summary": "Create a group",
+        "description": "Create a group",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "groupName": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "users": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "groupId": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/groups/{groupId}": {
+      "get": {
+        "tags": [
+          "group"
+        ],
+        "summary": "Get a group",
+        "description": "Get a group",
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "description": "group id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "$ref": "#/components/schemas/Group"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "group"
+        ],
+        "summary": "Update a group",
+        "description": "Update a group",
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "description": "group id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "groupName": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "group"
+        ],
+        "summary": "Delete a group",
+        "description": "Delete a group",
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "description": "group id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/groups/{groupId}/users": {
+      "get": {
+        "tags": [
+          "group"
+        ],
+        "summary": "Get group users",
+        "description": "Get group users",
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "description": "group id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "email": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "group"
+        ],
+        "summary": "Invite users to group",
+        "description": "Invite users to group",
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "description": "group id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "users": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "newUsers": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "group"
+        ],
+        "summary": "Remove a user from group",
+        "description": "Remove a user from group",
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "description": "group id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "userId",
+            "in": "query",
+            "description": "user id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/groups/{groupId}/activities": {
+      "post": {
+        "tags": [
+          "group activity"
+        ],
+        "summary": "Create a group activity",
+        "description": "Create a group activity",
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "description": "group id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "activityName": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "startTime": {
+                    "type": "string"
+                  },
+                  "endTime": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "activityId": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "get": {
+        "tags": [
+          "group activity"
+        ],
+        "summary": "Get all group activities",
+        "description": "Get all group activities",
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "description": "group id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Activity"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/groups/{groupId}/activities/{activityId}": {
+      "get": {
+        "tags": [
+          "group activity"
+        ],
+        "summary": "Get a group activity",
+        "description": "Get a group activity",
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "description": "group id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "activityId",
+            "in": "path",
+            "description": "activity id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Activity"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "group activity"
+        ],
+        "summary": "Update a group activity",
+        "description": "Update a group activity",
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "description": "group id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "activityId",
+            "in": "path",
+            "description": "activity id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "activityName": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "startTime": {
+                    "type": "string"
+                  },
+                  "endTime": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "group activity"
+        ],
+        "summary": "Delete a group activity",
+        "description": "Delete a group activity",
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "description": "group id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "activityId",
+            "in": "path",
+            "description": "activity id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/challenges": {
+      "post": {
+        "tags": [
+          "challenge"
+        ],
+        "summary": "Create a challenge",
+        "description": "Create a challenge",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "challengeName": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "goals": {
+                    "type": "number"
+                  },
+                  "startTime": {
+                    "type": "string"
+                  },
+                  "endTime": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "challengeId": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "get": {
+        "tags": [
+          "challenge"
+        ],
+        "summary": "Get all challenges",
+        "description": "Get all challenges",
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Challenge"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/challenges/{challengeId}": {
+      "get": {
+        "tags": [
+          "challenge"
+        ],
+        "summary": "Get a challenge",
+        "description": "Get a challenge",
+        "parameters": [
+          {
+            "name": "challengeId",
+            "in": "path",
+            "description": "challenge id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Challenge"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "challenge"
+        ],
+        "summary": "Update a challenge",
+        "description": "Update a challenge",
+        "parameters": [
+          {
+            "name": "challengeId",
+            "in": "path",
+            "description": "challenge id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "challengeName": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "goals": {
+                    "type": "number"
+                  },
+                  "startTime": {
+                    "type": "string"
+                  },
+                  "endTime": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "challenge"
+        ],
+        "summary": "Delete a challenge",
+        "description": "Delete a challenge",
+        "parameters": [
+          {
+            "name": "challengeId",
+            "in": "path",
+            "description": "challenge id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
                       "type": "string"
                     }
                   }
@@ -143,9 +1606,11 @@
     },
     "/users/events": {
       "get": {
-        "tags": ["users"],
-        "summary": "Get user calendar events",
-        "description": "Get user calendar events",
+        "tags": [
+          "calendar"
+        ],
+        "summary": "Get all user calendar events",
+        "description": "Get all user calendar events",
         "responses": {
           "200": {
             "description": "Successful operation",
@@ -154,18 +1619,7 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "kind": {"type": "string"},
-                    "etag": {"type": "string"},
-                    "summary": {"type": "string"},
-                    "updated": {"type": "string"},
-                    "timeZone": {"type": "string"},
-                    "accessRole": {"type": "string"},
-                    "defaultReminders": {
-                      "type": "array",
-                      "items": {"type": "object"}
-                    },
-                    "nextPageToken": {"type": "string"},
-                    "items": {
+                    "data": {
                       "type": "array",
                       "items": {
                         "$ref": "#/components/schemas/Event"
@@ -184,11 +1638,13 @@
         ]
       }
     },
-    "/users/groups": {
+    "/users/eventactivities": {
       "get": {
-        "tags": ["users"],
-        "summary": "Get user groups",
-        "description": "Get user groups",
+        "tags": [
+          "calendar"
+        ],
+        "summary": "Get all user calendar events and user activities",
+        "description": "Get all user calendar events and user activities",
         "responses": {
           "200": {
             "description": "Successful operation",
@@ -200,208 +1656,9 @@
                     "data": {
                       "type": "array",
                       "items": {
-                        "type": "object",
-                        "properties": {
-                          "groupName": {"type": "string"},
-                          "description": {"type": "string"},
-                          "groupId": {"type": "string"}
-                        }
+                        "$ref": "#/components/schemas/EventActivity"
                       }
                     }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/groups": {
-      "post": {
-        "tags": ["groups"],
-        "summary": "Create a group",
-        "description": "Create a group",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "groupName": {"type": "string"},
-                  "description": {"type": "string"},
-                  "users": {
-                    "type": "array",
-                    "items": {"type": "string"}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {"type": "string"},
-                    "groupId": {"type": "string"},
-                    "groupName": {"type": "string"}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/groups/{groupId}/users": {
-      "get": {
-        "tags": ["groups"],
-        "summary": "Get group users",
-        "description": "Get group users",
-        "parameters": [
-          {
-            "name": "groupId",
-            "in": "path",
-            "description": "Group id",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {"type": "string"},
-                    "data": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "name": {"type": "string"},
-                          "email": {"type": "string"}
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      },
-      "post": {
-        "tags": ["groups"],
-        "summary": "Invite users to group",
-        "description": "Invite users to group",
-        "parameters": [
-          {
-            "name": "groupId",
-            "in": "path",
-            "description": "Group id",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "users": {
-                    "type": "array",
-                    "items": {"type": "string"}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {"type": "string"},
-                    "newUsers": {
-                      "type": "array",
-                      "items": {"type": "string"}
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      },
-      "delete": {
-        "tags": ["groups"],
-        "summary": "Remove a user from group",
-        "description": "Remove a user from group",
-        "parameters": [
-          {
-            "name": "groupId",
-            "in": "path",
-            "description": "Group id",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "userId",
-            "in": "query",
-            "description": "User id",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {"type": "string"}
                   }
                 }
               }
@@ -417,14 +1674,16 @@
     },
     "/groups/{groupId}/events": {
       "get": {
-        "tags": ["groups"],
-        "summary": "Get group events",
-        "description": "Get group events",
+        "tags": [
+          "calendar"
+        ],
+        "summary": "Get all group user events",
+        "description": "Get all group user events",
         "parameters": [
           {
             "name": "groupId",
             "in": "path",
-            "description": "Group id",
+            "description": "group id",
             "required": true,
             "schema": {
               "type": "string"
@@ -437,9 +1696,149 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Event"
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Event"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/groups/{groupId}/eventactivities": {
+      "get": {
+        "tags": [
+          "calendar"
+        ],
+        "summary": "Get all group user event activities",
+        "description": "Get all group user event activities",
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "description": "group id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/EventActivity"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/events/{eventId}": {
+      "get": {
+        "tags": [
+          "calendar"
+        ],
+        "summary": "Get a calendar event",
+        "description": "Get a calendar event",
+        "parameters": [
+          {
+            "name": "eventId",
+            "in": "path",
+            "description": "event id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Event"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/eventactivities/{eventActivityId}": {
+      "get": {
+        "tags": [
+          "calendar"
+        ],
+        "summary": "Get an event activity",
+        "description": "Get an event activity",
+        "parameters": [
+          {
+            "name": "eventActivityId",
+            "in": "path",
+            "description": "event activity id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/EventActivity"
+                      }
+                    }
                   }
                 }
               }
@@ -455,260 +1854,25 @@
     },
     "/groups/{groupId}/places": {
       "get": {
-        "tags": ["groups"],
-        "summary": "Get group place recommendations",
+        "tags": [
+          "place"
+        ],
+        "summary": "Get all group place recommendations",
         "description": "Get group place recommendations",
         "parameters": [
           {
             "name": "groupId",
             "in": "path",
-            "description": "Group id",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Place"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/groups/{groupId}/activities": {
-      "post": {
-        "tags": ["group activities"],
-        "summary": "Create group activity",
-        "description": "Create group activity",
-        "parameters": [
-          {
-            "name": "groupId",
-            "in": "path",
-            "description": "Group id",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "activityName": {"type": "string"},
-                  "startTime": {"type": "string"},
-                  "endTime": {"type": "string"},
-                  "finishTime": {"type": "string"},
-                  "isFinish": {"type": "boolean"}
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {"type": "string"},
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "activityId": {"type": "string"}
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      },
-      "get": {
-        "tags": ["group activities"],
-        "summary": "Get all group activities",
-        "description": "Get all group activities",
-        "parameters": [
-          {
-            "name": "groupId",
-            "in": "path",
-            "description": "Group id",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Activity"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/groups/{groupId}/activities/{activityId}": {
-      "get": {
-        "tags": ["group activities"],
-        "summary": "Get group activity",
-        "description": "Get group activity",
-        "parameters": [
-          {
-            "name": "groupId",
-            "in": "path",
-            "description": "Group id",
+            "description": "group id",
             "required": true,
             "schema": {
               "type": "string"
             }
           },
           {
-            "name": "activityId",
-            "in": "path",
-            "description": "Activity id",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Activity"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      },
-      "put": {
-        "tags": ["group activities"],
-        "summary": "Update group activity",
-        "description": "Update group activity",
-        "parameters": [
-          {
-            "name": "groupId",
-            "in": "path",
-            "description": "Group id",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "activityId",
-            "in": "path",
-            "description": "Activity id",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "activityName": {"type": "string"},
-                  "startTime": {"type": "string"},
-                  "endTime": {"type": "string"},
-                  "finishTime": {"type": "string"},
-                  "isFinish": {"type": "boolean"}
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {"type": "string"}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      },
-      "delete": {
-        "tags": ["group activities"],
-        "summary": "Delete group activity",
-        "description": "Delete group activity",
-        "parameters": [
-          {
-            "name": "groupId",
-            "in": "path",
-            "description": "Group id",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "activityId",
-            "in": "path",
-            "description": "Activity id",
+            "name": "userIds",
+            "in": "query",
+            "description": "user ids separated by comma",
             "required": true,
             "schema": {
               "type": "string"
@@ -723,54 +1887,10 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "message": {"type": "string"}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/challenges": {
-      "post": {
-        "tags": ["challenges"],
-        "summary": "Create challenge",
-        "description": "Create challenge",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "challengeName": {"type": "string"},
-                  "description": {"type": "string"},
-                  "goals": {"type": "number"},
-                  "startTime": {"type": "string"},
-                  "endTime": {"type": "string"}
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {"type": "string"},
                     "data": {
-                      "type": "object",
-                      "properties": {
-                        "challengeId": {"type": "string"}
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Place"
                       }
                     }
                   }
@@ -784,129 +1904,20 @@
             "bearerAuth": []
           }
         ]
-      },
-      "get": {
-        "tags": ["challenges"],
-        "summary": "Get all challenges",
-        "description": "Get all challenges",
-        "responses": {
-          "200": {
-            "description": "Successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Challenge"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
       }
     },
-    "/challenges/{challengeId}": {
+    "/places/{placeId}": {
       "get": {
-        "tags": ["challenges"],
-        "summary": "Get challenge",
-        "description": "Get challenge",
-        "parameters": [
-          {
-            "name": "challengeId",
-            "in": "path",
-            "description": "Challenge id",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
+        "tags": [
+          "place"
         ],
-        "responses": {
-          "200": {
-            "description": "Successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Challenge"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      },
-      "put": {
-        "tags": ["challenges"],
-        "summary": "Update challenge",
-        "description": "Update challenge",
+        "summary": "Get a place",
+        "description": "Get a place",
         "parameters": [
           {
-            "name": "challengeId",
+            "name": "placeId",
             "in": "path",
-            "description": "Challenge id",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "challengeName": {"type": "string"},
-                  "description": {"type": "string"},
-                  "goals": {"type": "number"},
-                  "points": {"type": "number"},
-                  "startTime": {"type": "string"},
-                  "endTime": {"type": "string"}
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {"type": "string"}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      },
-      "delete": {
-        "tags": ["challenges"],
-        "summary": "Delete challenge",
-        "description": "Delete challenge",
-        "parameters": [
-          {
-            "name": "challengeId",
-            "in": "path",
-            "description": "Challenge id",
+            "description": "place id",
             "required": true,
             "schema": {
               "type": "string"
@@ -921,394 +1932,9 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "message": {"type": "string"}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/users/challenges": {
-      "post": {
-        "tags": ["user challenges"],
-        "summary": "Create user challenge",
-        "description": "Create user challenge",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "challengeId": {"type": "string"}
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {"type": "string"},
                     "data": {
-                      "type": "object",
-                      "properties": {
-                        "userChallengeId": {"type": "string"}
-                      }
+                      "$ref": "#/components/schemas/Place"
                     }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      },
-      "get": {
-        "tags": ["user challenges"],
-        "summary": "Get all user challenges",
-        "description": "Get all user challenges",
-        "responses": {
-          "200": {
-            "description": "Successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UserChallenge"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/users/challenges/{userChallengeId}": {
-      "get": {
-        "tags": ["user challenges"],
-        "summary": "Get user challenge",
-        "description": "Get user challenge",
-        "parameters": [
-          {
-            "name": "userChallengeId",
-            "in": "path",
-            "description": "User challenge id",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UserChallenge"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      },
-      "put": {
-        "tags": ["user challenges"],
-        "summary": "Update user challenge",
-        "description": "Update user challenge",
-        "parameters": [
-          {
-            "name": "userChallengeId",
-            "in": "path",
-            "description": "User challenge id",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "challengeId": {"type": "string"},
-                  "points": {"type": "number"}
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {"type": "string"}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      },
-      "delete": {
-        "tags": ["user challenges"],
-        "summary": "Delete user challenge",
-        "description": "Delete user challenge",
-        "parameters": [
-          {
-            "name": "userChallengeId",
-            "in": "path",
-            "description": "User challenge id",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {"type": "string"}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/users/activities": {
-      "post": {
-        "tags": ["user activities"],
-        "summary": "Create user activity",
-        "description": "Create user activity",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "activityName": {"type": "string"},
-                  "startTime": {"type": "string"},
-                  "endTime": {"type": "string"},
-                  "finishTime": {"type": "string"},
-                  "isFinish": {"type": "boolean"}
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {"type": "string"},
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "activityId": {"type": "string"}
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      },
-      "get": {
-        "tags": ["user activities"],
-        "summary": "Get all user activities",
-        "description": "Get all user activities",
-        "responses": {
-          "200": {
-            "description": "Successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Activity"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/users/activities/{activityId}": {
-      "get": {
-        "tags": ["user activities"],
-        "summary": "Get user activity",
-        "description": "Get user activity",
-        "parameters": [
-          {
-            "name": "activityId",
-            "in": "path",
-            "description": "Activity id",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Activity"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      },
-      "put": {
-        "tags": ["user activities"],
-        "summary": "Update user activity",
-        "description": "Update user activity",
-        "parameters": [
-          {
-            "name": "activityId",
-            "in": "path",
-            "description": "Activity id",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "activityName": {"type": "string"},
-                  "startTime": {"type": "string"},
-                  "endTime": {"type": "string"},
-                  "finishTime": {"type": "string"},
-                  "isFinish": {"type": "boolean"}
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {"type": "string"}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      },
-      "delete": {
-        "tags": ["user activities"],
-        "summary": "Delete user activity",
-        "description": "Delete user activity",
-        "parameters": [
-          {
-            "name": "activityId",
-            "in": "path",
-            "description": "Activity id",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {"type": "string"}
                   }
                 }
               }
@@ -1325,85 +1951,196 @@
   },
   "components": {
     "schemas": {
+      "Group": {
+        "type": "object",
+        "properties": {
+          "groupId": {
+            "type": "string"
+          },
+          "groupName": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
       "Event": {
         "type": "object",
         "properties": {
-          "user": {"type": "string"},
-          "status": {"type": "string"},
-          "created": {"type": "string"},
-          "updated": {"type": "string"},
-          "summary": {"type": "string"},
-          "description": {"type": "string"},
+          "id": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "created": {
+            "type": "string"
+          },
+          "updated": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
           "start": {
             "type": "object",
             "properties": {
-              "dateTime": {"type": "string"},
-              "timeZone": {"type": "string"}
+              "dateTime": {
+                "type": "string"
+              },
+              "timeZone": {
+                "type": "string"
+              }
             }
           },
           "end": {
             "type": "object",
             "properties": {
-              "dateTime": {"type": "string"},
-              "timeZone": {"type": "string"}
+              "dateTime": {
+                "type": "string"
+              },
+              "timeZone": {
+                "type": "string"
+              }
             }
+          }
+        }
+      },
+      "Activity": {
+        "type": "object",
+        "properties": {
+          "activityId": {
+            "type": "string"
+          },
+          "activityName": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "startTime": {
+            "type": "string"
+          },
+          "endTime": {
+            "type": "string"
+          },
+          "finishTime": {
+            "type": "string"
+          }
+        }
+      },
+      "EventActivity": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "startTime": {
+            "type": "string"
+          },
+          "endTime": {
+            "type": "string"
           }
         }
       },
       "Place": {
         "type": "object",
         "properties": {
-          "business_status": {"type": "string"},
-          "geometry": {"type": "object"},
-          "icon": {"type": "string"},
-          "icon_background_color": {"type": "string"},
-          "icon_mask_base_uri": {"type": "string"},
-          "name": {"type": "string"},
-          "place_id": {"type": "string"},
-          "plus_code": {"type": "object"},
-          "rating": {"type": "number"},
-          "reference": {"type": "string"},
-          "scope": {"type": "string"},
+          "business_status": {
+            "type": "string"
+          },
+          "geometry": {
+            "type": "object"
+          },
+          "icon": {
+            "type": "string"
+          },
+          "icon_background_color": {
+            "type": "string"
+          },
+          "icon_mask_base_uri": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "place_id": {
+            "type": "string"
+          },
+          "plus_code": {
+            "type": "object"
+          },
+          "rating": {
+            "type": "number"
+          },
+          "reference": {
+            "type": "string"
+          },
+          "scope": {
+            "type": "string"
+          },
           "types": {
             "type": "array",
             "items": {
               "type": "string"
             }
           },
-          "user_ratings_total": {"type": "number"},
-          "vicinity": {"type": "string"}
-        }
-      },
-      "Activity": {
-        "type": "object",
-        "properties": {
-          "activityId": {"type": "string"},
-          "activityName": {"type": "string"},
-          "startTime": {"type": "string"},
-          "endTime": {"type": "string"},
-          "finishTime": {"type": "string"},
-          "isFinish": {"type": "boolean"}
-        }
-      },
-      "Challenge": {
-        "type": "object",
-        "properties": {
-          "challengeId": {"type": "string"},
-          "challengeName": {"type": "string"},
-          "description": {"type": "string"},
-          "goals": {"type": "number"},
-          "points": {"type": "number"},
-          "startTime": {"type": "string"},
-          "endTime": {"type": "string"}
+          "user_ratings_total": {
+            "type": "number"
+          },
+          "vicinity": {
+            "type": "string"
+          }
         }
       },
       "UserChallenge": {
         "type": "object",
         "properties": {
-          "userChallengeId": {"type": "string"},
-          "userId": {"type": "string"},
-          "challengeId": {"type": "string"},
-          "points": {"type": "number"}
+          "userChallengeId": {
+            "type": "string"
+          },
+          "challengeId": {
+            "type": "string"
+          },
+          "points": {
+            "type": "number"
+          }
+        }
+      },
+      "Challenge": {
+        "type": "object",
+        "properties": {
+          "challengeId": {
+            "type": "string"
+          },
+          "challengeName": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "goals": {
+            "type": "number"
+          },
+          "startTime": {
+            "type": "string"
+          },
+          "endTime": {
+            "type": "string"
+          }
         }
       }
     },
