@@ -1,20 +1,131 @@
 const {db} = require('../../firestore');
-const axios = require('axios');
 
 const userInfoHandler = async (request, h) => {
   try {
-    const config = {
-      headers: {Authorization: request.headers.authorization},
-    };
-
-    // call google userinfo api
-    const userInfoRes = await axios.get(
-      'https://www.googleapis.com/userinfo/v2/me',
-      config,
-    );
+    const {authUser} = request;
+    const userRes = await db.collection('users').doc(authUser.email).get();
+    const user = await userRes.data();
 
     const response = h.response({
-      data: userInfoRes.data,
+      data: {
+        email: user.email,
+        name: user.name,
+        picture: authUser.picture,
+        age: user.age,
+        lastEducation: user.lastEducation,
+        job: user.job,
+        gender: user.gender,
+        education: user.education,
+        employmentType: user.employmentType,
+        level: user.level,
+        exp: user.exp,
+      },
+    });
+    response.code(200);
+    return response;
+  } catch (err) {
+    const response = h.response({
+      message: err.message,
+    });
+    response.code(500);
+    return response;
+  }
+};
+
+const updateUserInfoHandler = async (request, h) => {
+  try {
+    const {authUser} = request;
+    const {name, age, lastEducation, job, gender, education, employmentType} =
+      request.payload;
+
+    // check request body payload
+    if (
+      !name &&
+      !age &&
+      !lastEducation &&
+      !job &&
+      !gender &&
+      !education &&
+      !employmentType
+    ) {
+      const response = h.response({
+        message: 'no content',
+      });
+      response.code(204);
+      return response;
+    }
+
+    // check the undefined properties
+    const updatedUserInfo = {};
+    if (name) {
+      updatedUserInfo.name = name;
+    }
+    if (age) {
+      updatedUserInfo.age = age;
+    }
+    if (lastEducation) {
+      updatedUserInfo.lastEducation = lastEducation;
+    }
+    if (job) {
+      updatedUserInfo.job = job;
+    }
+    if (gender) {
+      updatedUserInfo.gender = gender;
+    }
+    if (education) {
+      updatedUserInfo.education = education;
+    }
+    if (employmentType) {
+      updatedUserInfo.employmentType = employmentType;
+    }
+
+    const userRes = await db.collection('users').doc(authUser.email);
+    userRes.update(updatedUserInfo);
+
+    const response = h.response({
+      message: 'user info successfully updated',
+    });
+    response.code(200);
+    return response;
+  } catch (err) {
+    const response = h.response({
+      message: err.message,
+    });
+    response.code(500);
+    return response;
+  }
+};
+
+const updateUserLevel = async (request, h) => {
+  try {
+    const {exp} = request.payload;
+
+    if (!exp) {
+      const response = h.response({
+        message: 'no content',
+      });
+      response.code(204);
+      return response;
+    }
+
+    const {authUser} = request;
+    const userRef = await db.collection('users').doc(authUser.email);
+    const userRes = await userRef.get();
+    const user = await userRes.data();
+
+    const updatedUserLevel = {
+      exp: user.exp + exp,
+    };
+
+    const expThreshold = 100 * Math.pow(2, user.level - 1);
+    if (updatedUserLevel.exp >= expThreshold) {
+      updatedUserLevel.level = user.level + 1;
+    }
+
+    userRef.update(updatedUserLevel);
+
+    const response = h.response({
+      message: 'user level successfully updated',
     });
     response.code(200);
     return response;
@@ -67,4 +178,9 @@ const getUserGroupsHandler = async (request, h) => {
   }
 };
 
-module.exports = {userInfoHandler, getUserGroupsHandler};
+module.exports = {
+  userInfoHandler,
+  updateUserInfoHandler,
+  updateUserLevel,
+  getUserGroupsHandler,
+};

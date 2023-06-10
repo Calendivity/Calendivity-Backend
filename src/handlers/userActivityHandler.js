@@ -11,6 +11,7 @@ const createUserActivityHandler = async (request, h) => {
       endTime,
       finishTime,
       location,
+      exp,
     } = request.payload;
     const userId = request.authUser.email;
 
@@ -35,6 +36,7 @@ const createUserActivityHandler = async (request, h) => {
           ? Timestamp.fromDate(new Date(finishTime))
           : null,
       location: location || '',
+      exp: exp || 0,
     });
     // update the activities id property
     db.collection('userActivities').doc(activitiesRes.id).update({
@@ -83,6 +85,7 @@ const getAllUserActivitiesHandler = async (request, h) => {
               ? new Date(doc.data().finishTime.seconds * 1000)
               : null,
           location: doc.data().location,
+          exp: doc.data().exp,
         });
       });
 
@@ -109,6 +112,7 @@ const getAllUserActivitiesHandler = async (request, h) => {
             ? new Date(doc.data().finishTime.seconds * 1000)
             : null,
         location: doc.data().location,
+        exp: doc.data().exp,
       });
     });
 
@@ -155,6 +159,7 @@ const getUserActivityHandler = async (request, h) => {
             ? new Date(userActivity.data().finishTime.seconds * 1000)
             : null,
         location: userActivity.data().location,
+        exp: userActivity.data().exp,
       },
     });
     response.code(200);
@@ -178,6 +183,7 @@ const updateUserActivityHandler = async (request, h) => {
       endTime,
       location,
       finishTime,
+      exp,
     } = request.payload;
 
     // check request body payload
@@ -187,7 +193,8 @@ const updateUserActivityHandler = async (request, h) => {
       !startTime &&
       !endTime &&
       !location &&
-      !finishTime
+      !finishTime &&
+      !exp
     ) {
       const response = h.response({
         message: 'no content',
@@ -227,6 +234,9 @@ const updateUserActivityHandler = async (request, h) => {
     }
     if (finishTime) {
       updatedActivity.finishTime = Timestamp.fromDate(new Date(finishTime));
+    }
+    if (exp) {
+      updatedActivity.exp = Timestamp.fromDate(new Date(exp));
     }
 
     userActivitiesRef.doc(activityId).update(updatedActivity);

@@ -71,6 +71,7 @@ const getAllUserChallengeHandler = async (request, h) => {
         challengeId: doc.data().challengeId,
         goals: challengeSnap.data().goals,
         points: doc.data().points,
+        exp: challengeSnap.data().exp,
       });
     }
 
@@ -115,6 +116,7 @@ const getUserChallengeHandler = async (request, h) => {
         challengeId: userChallenge.data().challengeId,
         goals: challenge.data().goals,
         points: userChallenge.data().points,
+        exp: challenge.data().exp,
       },
     });
     response.code(200);

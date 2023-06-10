@@ -41,6 +41,8 @@ const authHandler = async (request, h) => {
         email: userInfo.email,
         name: userInfo.name,
         position: new GeoPoint(-6.2, 106.816666),
+        level: 1,
+        exp: 0,
       });
     }
     const userRes = userRef.doc(userInfo.email);
