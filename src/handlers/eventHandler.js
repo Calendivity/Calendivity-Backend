@@ -64,6 +64,7 @@ const getAllPersonalEventActivitiesHandler = async (request, h) => {
         description: event.description,
         startTime: new Date(event.start.dateTime),
         endTime: new Date(event.end.dateTime),
+        location: event.location,
       });
     }
 
@@ -81,6 +82,7 @@ const getAllPersonalEventActivitiesHandler = async (request, h) => {
         description: doc.data().description,
         startTime: new Date(doc.data().startTime.seconds * 1000),
         endTime: new Date(doc.data().endTime.seconds * 1000),
+        location: doc.data().location,
       });
     });
 
@@ -207,6 +209,7 @@ const getAllGroupEventActivitiesHandler = async (request, h) => {
           description: event.description,
           startTime: new Date(event.start.dateTime),
           endTime: new Date(event.end.dateTime),
+          location: event.location,
         });
       }
     }
@@ -227,6 +230,7 @@ const getAllGroupEventActivitiesHandler = async (request, h) => {
           description: doc.data().description,
           startTime: new Date(doc.data().startTime.seconds * 1000),
           endTime: new Date(doc.data().endTime.seconds * 1000),
+          location: doc.data().location,
         });
       });
     }
@@ -336,6 +340,7 @@ const getEventActivityById = async (request, h) => {
           description: eventRes.data.description,
           startTime: new Date(eventRes.data.start.dateTime),
           endTime: new Date(eventRes.data.end.dateTime),
+          location: eventRes.data.location,
         },
       });
       response.code(200);
@@ -351,6 +356,7 @@ const getEventActivityById = async (request, h) => {
           description: activityRes.data.description,
           startTime: new Date(activityRes.data.startTime.seconds * 1000),
           endTime: new Date(activityRes.data.endTime.seconds * 1000),
+          location: activityRes.data.location,
         },
       });
       response.code(200);

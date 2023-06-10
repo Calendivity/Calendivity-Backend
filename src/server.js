@@ -9,7 +9,7 @@ const userChallengeRoute = require('./routes/userChallengeRoute');
 const groupRoute = require('./routes/groupRoute');
 const groupActivityRoute = require('./routes/groupActivityRoute');
 const challengeRoute = require('./routes/challengeRoute');
-const calendarRoute = require('./routes/calendarRoute');
+const eventRoute = require('./routes/eventRoute');
 const placeRoute = require('./routes/placeRoute');
 
 const init = async () => {
@@ -32,7 +32,7 @@ const init = async () => {
     ...groupRoute,
     ...groupActivityRoute,
     ...challengeRoute,
-    ...calendarRoute,
+    ...eventRoute,
     ...placeRoute,
     {
       method: 'GET',
@@ -51,7 +51,7 @@ const init = async () => {
   ]);
 
   await server.start();
-  console.log(`Server berjalan pada http://localhost:${server.info.port}`);
+  console.log(`Server listening on http://localhost:${server.info.port}`);
 };
 
 init();

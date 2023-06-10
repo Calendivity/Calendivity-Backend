@@ -32,7 +32,7 @@
       "name": "challenge"
     },
     {
-      "name": "calendar"
+      "name": "event"
     },
     {
       "name": "place"
@@ -262,6 +262,9 @@
                     "type": "string"
                   },
                   "endTime": {
+                    "type": "string"
+                  },
+                  "location": {
                     "type": "string"
                   }
                 }
@@ -1106,6 +1109,9 @@
                   },
                   "endTime": {
                     "type": "string"
+                  },
+                  "location": {
+                    "type": "string"
                   }
                 }
               }
@@ -1607,7 +1613,7 @@
     "/users/events": {
       "get": {
         "tags": [
-          "calendar"
+          "event"
         ],
         "summary": "Get all user calendar events",
         "description": "Get all user calendar events",
@@ -1641,7 +1647,7 @@
     "/users/eventactivities": {
       "get": {
         "tags": [
-          "calendar"
+          "event"
         ],
         "summary": "Get all user calendar events and user activities",
         "description": "Get all user calendar events and user activities",
@@ -1675,7 +1681,7 @@
     "/groups/{groupId}/events": {
       "get": {
         "tags": [
-          "calendar"
+          "event"
         ],
         "summary": "Get all group user events",
         "description": "Get all group user events",
@@ -1720,10 +1726,10 @@
     "/groups/{groupId}/eventactivities": {
       "get": {
         "tags": [
-          "calendar"
+          "event"
         ],
-        "summary": "Get all group user event activities",
-        "description": "Get all group user event activities",
+        "summary": "Get all group user calendar events and activities",
+        "description": "Get all group user calendar events and activities",
         "parameters": [
           {
             "name": "groupId",
@@ -1765,7 +1771,7 @@
     "/events/{eventId}": {
       "get": {
         "tags": [
-          "calendar"
+          "event"
         ],
         "summary": "Get a calendar event",
         "description": "Get a calendar event",
@@ -1810,10 +1816,10 @@
     "/eventactivities/{eventActivityId}": {
       "get": {
         "tags": [
-          "calendar"
+          "event"
         ],
-        "summary": "Get an event activity",
-        "description": "Get an event activity",
+        "summary": "Get an calendar event or user activity",
+        "description": "Get an calendar event or user activity",
         "parameters": [
           {
             "name": "eventActivityId",
@@ -1906,19 +1912,28 @@
         ]
       }
     },
-    "/places/{placeId}": {
+    "/place": {
       "get": {
         "tags": [
           "place"
         ],
-        "summary": "Get a place",
-        "description": "Get a place",
+        "summary": "Get a place by placeId or placeNamePlusCode",
+        "description": "Get a place by placeId or placeNamePlusCode",
         "parameters": [
           {
             "name": "placeId",
-            "in": "path",
+            "in": "query",
             "description": "place id",
-            "required": true,
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "placeNamePlusCode",
+            "in": "query",
+            "description": "place name plus code",
+            "required": false,
             "schema": {
               "type": "string"
             }
@@ -2030,6 +2045,9 @@
           },
           "finishTime": {
             "type": "string"
+          },
+          "location": {
+            "type": "string"
           }
         }
       },
@@ -2053,29 +2071,35 @@
           },
           "endTime": {
             "type": "string"
+          },
+          "location": {
+            "type": "string"
           }
         }
       },
       "Place": {
         "type": "object",
         "properties": {
+          "plus_name_code": {
+            "type": "string"
+          },
           "business_status": {
             "type": "string"
           },
           "geometry": {
             "type": "object"
           },
-          "icon": {
-            "type": "string"
-          },
-          "icon_background_color": {
-            "type": "string"
-          },
-          "icon_mask_base_uri": {
-            "type": "string"
-          },
           "name": {
             "type": "string"
+          },
+          "opening_hours": {
+            "type": "object"
+          },
+          "photos": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
           },
           "place_id": {
             "type": "string"
@@ -2085,12 +2109,6 @@
           },
           "rating": {
             "type": "number"
-          },
-          "reference": {
-            "type": "string"
-          },
-          "scope": {
-            "type": "string"
           },
           "types": {
             "type": "array",

@@ -6,7 +6,7 @@ const {
   getAllGroupEventActivitiesHandler,
   getEventById,
   getEventActivityById,
-} = require('../handlers/calendarHandler');
+} = require('../handlers/eventHandler');
 
 const calendarRoute = [
   {

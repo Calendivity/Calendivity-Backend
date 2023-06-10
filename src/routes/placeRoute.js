@@ -1,7 +1,7 @@
-const {verifyGoogle} = require('../middleware');
+const {verifyGoogle, verifyGroup} = require('../middleware');
 const {
   getAllPlacesByGroupMembersPositionHandler,
-  getPlaceById,
+  getPlace,
 } = require('../handlers/placeHandler');
 
 const placeRoute = [
@@ -9,16 +9,16 @@ const placeRoute = [
     method: 'GET',
     path: '/groups/{groupId}/places',
     options: {
-      pre: [{method: verifyGoogle}],
+      pre: [{method: verifyGoogle}, {method: verifyGroup}],
       handler: getAllPlacesByGroupMembersPositionHandler,
     },
   },
   {
     method: 'GET',
-    path: '/places/{placeId}',
+    path: '/place',
     options: {
       pre: [{method: verifyGoogle}],
-      handler: getPlaceById,
+      handler: getPlace,
     },
   },
 ];

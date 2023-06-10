@@ -65,8 +65,16 @@ const getAllPlacesByGroupMembersPositionHandler = async (request, h) => {
       `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${midpointLatitude}%2C${midpointLongitude}&radius=${radius}&keyword=${keyword}&key=${process.env.MAPS_API_KEY}`,
     );
 
+    const places = [];
+    for (const place of placeRes.data.results) {
+      places.push({
+        name_plus_code: `${place.name}, ${place.plus_code.compound_code}`,
+        ...place,
+      });
+    }
+
     const response = h.response({
-      data: placeRes.data.results,
+      data: places,
     });
     response.code(200);
     return response;
@@ -79,13 +87,39 @@ const getAllPlacesByGroupMembersPositionHandler = async (request, h) => {
   }
 };
 
-const getPlaceById = async (request, h) => {
+const getPlace = async (request, h) => {
   try {
-    const {placeId} = request.params;
+    const {placeId, placeNamePlusCode} = request.query;
+
+    if (!placeId && !placeNamePlusCode) {
+      const response = h.response({
+        message: 'bad request',
+      });
+      response.code(400);
+      return response;
+    }
+
+    if (placeId && placeNamePlusCode) {
+      const response = h.response({
+        message: 'use one of placeId or placeNamePlusCode',
+      });
+      response.code(400);
+      return response;
+    }
+
+    let placeNamePlusCodeId = '';
+    if (placeNamePlusCode) {
+      const placeNamePlusCodeRes = await axios.get(
+        `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${placeNamePlusCode}&radius=1000&key=${process.env.MAPS_API_KEY}`,
+      );
+      placeNamePlusCodeId = placeNamePlusCodeRes.data.predictions[0].place_id;
+    }
 
     // get place by place_id from google place api
     const placeRes = await axios.get(
-      `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&key=${process.env.MAPS_API_KEY}`,
+      `https://maps.googleapis.com/maps/api/place/details/json?place_id=${
+        placeId || placeNamePlusCodeId
+      }&key=${process.env.MAPS_API_KEY}`,
     );
 
     // check if place not found
@@ -97,8 +131,12 @@ const getPlaceById = async (request, h) => {
       return response;
     }
 
+    const place = placeRes.data.result;
     const response = h.response({
-      data: placeRes.data,
+      data: {
+        name_plus_code: `${place.name}, ${place.plus_code.compound_code}`,
+        ...place,
+      },
     });
     response.code(200);
     return response;
@@ -111,4 +149,7 @@ const getPlaceById = async (request, h) => {
   }
 };
 
-module.exports = {getAllPlacesByGroupMembersPositionHandler, getPlaceById};
+module.exports = {
+  getAllPlacesByGroupMembersPositionHandler,
+  getPlace,
+};
