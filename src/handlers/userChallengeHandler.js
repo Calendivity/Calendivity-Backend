@@ -3,7 +3,7 @@ const {db} = require('../../firestore');
 const createUserChallenge = async (request, h) => {
   try {
     const userId = request.authUser.email;
-    const {challengeId} = request.payload;
+    const {challengeId, difficulty, exp} = request.payload;
 
     // check request body paylaod
     if (!challengeId) {
@@ -32,6 +32,8 @@ const createUserChallenge = async (request, h) => {
       userId,
       challengeId,
       points: 0,
+      difficulty: difficulty || 0,
+      exp: exp || 0,
     });
     userChallengesRef.doc(userChallengeSnap.id).update({
       userChallengeId: userChallengeSnap.id,
@@ -69,9 +71,14 @@ const getAllUserChallengeHandler = async (request, h) => {
       userChallenges.push({
         userChallengeId: doc.data().userChallengeId,
         challengeId: doc.data().challengeId,
+        challengeName: challengeSnap.data().challengeName,
+        description: challengeSnap.data().description,
+        startTime: new Date(challengeSnap.data().startTime.seconds * 1000),
+        endTime: new Date(challengeSnap.data().endTime.seconds * 1000),
         goals: challengeSnap.data().goals,
         points: doc.data().points,
-        exp: challengeSnap.data().exp,
+        difficulty: doc.data().difficulty,
+        exp: doc.data().exp,
       });
     }
 
@@ -114,9 +121,14 @@ const getUserChallengeHandler = async (request, h) => {
       data: {
         userChallengeId: userChallenge.data().userChallengeId,
         challengeId: userChallenge.data().challengeId,
+        challengeName: challenge.data().challengeName,
+        description: challenge.data().description,
+        startTime: new Date(challenge.data().startTime.seconds * 1000),
+        endTime: new Date(challenge.data().endTime.seconds * 1000),
         goals: challenge.data().goals,
         points: userChallenge.data().points,
-        exp: challenge.data().exp,
+        difficulty: userChallenge.data().difficulty,
+        exp: userChallenge.data().exp,
       },
     });
     response.code(200);

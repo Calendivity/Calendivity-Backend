@@ -327,8 +327,11 @@
                   "endTime": {
                     "type": "string"
                   },
-                  "location": {
-                    "type": "string"
+                  "difficulty": {
+                    "type": "number"
+                  },
+                  "exp": {
+                    "type": "number"
                   }
                 }
               }
@@ -381,7 +384,7 @@
                     "data": {
                       "type": "array",
                       "items": {
-                        "$ref": "#/components/schemas/Activity"
+                        "$ref": "#/components/schemas/UserActivity"
                       }
                     }
                   }
@@ -422,7 +425,7 @@
                   "type": "object",
                   "properties": {
                     "data": {
-                      "$ref": "#/components/schemas/Activity"
+                      "$ref": "#/components/schemas/UserActivity"
                     }
                   }
                 }
@@ -468,6 +471,15 @@
                   },
                   "endTime": {
                     "type": "string"
+                  },
+                  "finishTime": {
+                    "type": "string"
+                  },
+                  "difficulty": {
+                    "type": "number"
+                  },
+                  "exp": {
+                    "type": "number"
                   }
                 }
               }
@@ -549,6 +561,12 @@
                 "properties": {
                   "challengeId": {
                     "type": "string"
+                  },
+                  "difficulty": {
+                    "type": "number"
+                  },
+                  "exp": {
+                    "type": "number"
                   }
                 }
               }
@@ -1139,6 +1157,9 @@
                   "endTime": {
                     "type": "string"
                   },
+                  "finishTime": {
+                    "type": "string"
+                  },
                   "location": {
                     "type": "string"
                   }
@@ -1204,7 +1225,7 @@
                     "data": {
                       "type": "array",
                       "items": {
-                        "$ref": "#/components/schemas/Activity"
+                        "$ref": "#/components/schemas/GroupActivity"
                       }
                     }
                   }
@@ -1254,7 +1275,7 @@
                   "type": "object",
                   "properties": {
                     "data": {
-                      "$ref": "#/components/schemas/Activity"
+                      "$ref": "#/components/schemas/GroupActivity"
                     }
                   }
                 }
@@ -1308,6 +1329,12 @@
                     "type": "string"
                   },
                   "endTime": {
+                    "type": "string"
+                  },
+                  "finishTime": {
+                    "type": "string"
+                  },
+                  "location": {
                     "type": "string"
                   }
                 }
@@ -1411,9 +1438,6 @@
                   },
                   "endTime": {
                     "type": "string"
-                  },
-                  "exp": {
-                    "type": "number"
                   }
                 }
               }
@@ -1556,9 +1580,6 @@
                   },
                   "endTime": {
                     "type": "string"
-                  },
-                  "exp": {
-                    "type": "number"
                   }
                 }
               }
@@ -2064,7 +2085,36 @@
           }
         }
       },
-      "Activity": {
+      "UserActivity": {
+        "type": "object",
+        "properties": {
+          "activityId": {
+            "type": "string"
+          },
+          "activityName": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "startTime": {
+            "type": "string"
+          },
+          "endTime": {
+            "type": "string"
+          },
+          "finishTime": {
+            "type": "string"
+          },
+          "difficulty": {
+            "type": "number"
+          },
+          "exp": {
+            "type": "number"
+          }
+        }
+      },
+      "GroupActivity": {
         "type": "object",
         "properties": {
           "activityId": {
@@ -2087,9 +2137,6 @@
           },
           "location": {
             "type": "string"
-          },
-          "exp": {
-            "type": "number"
           }
         }
       },
@@ -2175,10 +2222,25 @@
           "challengeId": {
             "type": "string"
           },
+          "challengeName": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "startTime": {
+            "type": "string"
+          },
+          "endTime": {
+            "type": "string"
+          },
           "goals": {
             "type": "number"
           },
           "points": {
+            "type": "number"
+          },
+          "difficulty": {
             "type": "number"
           },
           "exp": {
@@ -2206,9 +2268,6 @@
           },
           "endTime": {
             "type": "string"
-          },
-          "exp": {
-            "type": "number"
           }
         }
       }

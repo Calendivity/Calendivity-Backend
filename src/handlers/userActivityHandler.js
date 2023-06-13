@@ -10,7 +10,7 @@ const createUserActivityHandler = async (request, h) => {
       startTime,
       endTime,
       finishTime,
-      location,
+      difficulty,
       exp,
     } = request.payload;
     const userId = request.authUser.email;
@@ -35,7 +35,7 @@ const createUserActivityHandler = async (request, h) => {
         finishTime !== undefined
           ? Timestamp.fromDate(new Date(finishTime))
           : null,
-      location: location || '',
+      difficulty: difficulty || '',
       exp: exp || 0,
     });
     // update the activities id property
@@ -84,7 +84,7 @@ const getAllUserActivitiesHandler = async (request, h) => {
             doc.data().finishTime !== null
               ? new Date(doc.data().finishTime.seconds * 1000)
               : null,
-          location: doc.data().location,
+          difficulty: doc.data().difficulty,
           exp: doc.data().exp,
         });
       });
@@ -111,7 +111,7 @@ const getAllUserActivitiesHandler = async (request, h) => {
           doc.data().finishTime !== null
             ? new Date(doc.data().finishTime.seconds * 1000)
             : null,
-        location: doc.data().location,
+        difficulty: doc.data().difficulty,
         exp: doc.data().exp,
       });
     });
@@ -158,7 +158,7 @@ const getUserActivityHandler = async (request, h) => {
           userActivity.data().finishTime !== null
             ? new Date(userActivity.data().finishTime.seconds * 1000)
             : null,
-        location: userActivity.data().location,
+        difficulty: userActivity.data().difficulty,
         exp: userActivity.data().exp,
       },
     });
@@ -181,8 +181,8 @@ const updateUserActivityHandler = async (request, h) => {
       description,
       startTime,
       endTime,
-      location,
       finishTime,
+      difficulty,
       exp,
     } = request.payload;
 
@@ -194,6 +194,7 @@ const updateUserActivityHandler = async (request, h) => {
       !endTime &&
       !location &&
       !finishTime &&
+      !difficulty &&
       !exp
     ) {
       const response = h.response({
@@ -234,6 +235,9 @@ const updateUserActivityHandler = async (request, h) => {
     }
     if (finishTime) {
       updatedActivity.finishTime = Timestamp.fromDate(new Date(finishTime));
+    }
+    if (difficulty) {
+      updatedActivity.difficulty = Timestamp.fromDate(new Date(difficulty));
     }
     if (exp) {
       updatedActivity.exp = Timestamp.fromDate(new Date(exp));

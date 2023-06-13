@@ -3,18 +3,11 @@ const {Timestamp} = require('@google-cloud/firestore');
 
 const createChallengeHandler = async (request, h) => {
   try {
-    const {challengeName, description, goals, startTime, endTime, exp} =
+    const {challengeName, description, goals, startTime, endTime} =
       request.payload;
 
     // check request body paylaod
-    if (
-      !challengeName ||
-      !description ||
-      !goals ||
-      !startTime ||
-      !endTime ||
-      !exp
-    ) {
+    if (!challengeName || !description || !goals || !startTime || !endTime) {
       const response = h.response({
         message: 'bad request',
       });
@@ -30,7 +23,6 @@ const createChallengeHandler = async (request, h) => {
       goals,
       startTime: Timestamp.fromDate(new Date(startTime)),
       endTime: Timestamp.fromDate(new Date(endTime)),
-      exp,
     });
     challengesRef.doc(challengeSnap.id).update({challengeId: challengeSnap.id});
 
@@ -70,7 +62,6 @@ const getAllChallengesHandler = async (request, h) => {
           goals: doc.data().goals,
           startTime: new Date(doc.data().startTime.seconds * 1000),
           endTime: new Date(doc.data().endTime.seconds * 1000),
-          exp: doc.data().exp,
         });
       });
 
@@ -91,7 +82,6 @@ const getAllChallengesHandler = async (request, h) => {
         goals: doc.data().goals,
         startTime: new Date(doc.data().startTime.seconds * 1000),
         endTime: new Date(doc.data().endTime.seconds * 1000),
-        exp: doc.data().exp,
       });
     });
 
@@ -134,7 +124,6 @@ const getChallengeHandler = async (request, h) => {
         goals: challenge.data().goals,
         startTime: new Date(challenge.data().startTime.seconds * 1000),
         endTime: new Date(challenge.data().endTime.seconds * 1000),
-        exp: challenge.data().exp,
       },
     });
     response.code(200);
@@ -151,7 +140,7 @@ const getChallengeHandler = async (request, h) => {
 const updateChallengeHandler = async (request, h) => {
   try {
     const {challengeId} = request.params;
-    const {challengeName, description, goals, startTime, endTime, exp} =
+    const {challengeName, description, goals, startTime, endTime} =
       request.payload;
 
     // check request body paylaod
@@ -160,8 +149,7 @@ const updateChallengeHandler = async (request, h) => {
       !description &&
       !goals &&
       !startTime &&
-      !endTime &&
-      !exp
+      !endTime
     ) {
       const response = h.response({
         message: 'no content',
@@ -199,9 +187,6 @@ const updateChallengeHandler = async (request, h) => {
     }
     if (endTime) {
       updatedChallenge.endTime = Timestamp.fromDate(new Date(endTime));
-    }
-    if (exp) {
-      updatedChallenge.exp = Timestamp.fromDate(new Date(exp));
     }
 
     // update challenge

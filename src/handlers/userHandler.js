@@ -117,7 +117,7 @@ const updateUserLevel = async (request, h) => {
       exp: user.exp + exp,
     };
 
-    const expThreshold = 100 * Math.pow(2, user.level - 1);
+    const expThreshold = 25 * Math.pow(2, user.level - 1);
     if (updatedUserLevel.exp >= expThreshold) {
       updatedUserLevel.level = user.level + 1;
     }
