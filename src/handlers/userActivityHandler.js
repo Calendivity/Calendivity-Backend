@@ -35,6 +35,7 @@ const createUserActivityHandler = async (request, h) => {
         finishTime !== undefined
           ? Timestamp.fromDate(new Date(finishTime))
           : null,
+      finish: false,
       difficulty: difficulty || '',
       exp: exp || 0,
     });
@@ -84,6 +85,7 @@ const getAllUserActivitiesHandler = async (request, h) => {
             doc.data().finishTime !== null
               ? new Date(doc.data().finishTime.seconds * 1000)
               : null,
+          finish: doc.data().finish,
           difficulty: doc.data().difficulty,
           exp: doc.data().exp,
         });
@@ -111,6 +113,7 @@ const getAllUserActivitiesHandler = async (request, h) => {
           doc.data().finishTime !== null
             ? new Date(doc.data().finishTime.seconds * 1000)
             : null,
+        finish: doc.data().finish,
         difficulty: doc.data().difficulty,
         exp: doc.data().exp,
       });
@@ -158,6 +161,7 @@ const getUserActivityHandler = async (request, h) => {
           userActivity.data().finishTime !== null
             ? new Date(userActivity.data().finishTime.seconds * 1000)
             : null,
+        finish: userActivity.data().finish,
         difficulty: userActivity.data().difficulty,
         exp: userActivity.data().exp,
       },
@@ -192,7 +196,6 @@ const updateUserActivityHandler = async (request, h) => {
       !description &&
       !startTime &&
       !endTime &&
-      !location &&
       !finishTime &&
       !difficulty &&
       !exp
@@ -230,11 +233,9 @@ const updateUserActivityHandler = async (request, h) => {
     if (endTime) {
       updatedActivity.endTime = Timestamp.fromDate(new Date(endTime));
     }
-    if (location) {
-      updatedActivity.location = Timestamp.fromDate(new Date(location));
-    }
     if (finishTime) {
       updatedActivity.finishTime = Timestamp.fromDate(new Date(finishTime));
+      updatedActivity.finish = true;
     }
     if (difficulty) {
       updatedActivity.difficulty = Timestamp.fromDate(new Date(difficulty));

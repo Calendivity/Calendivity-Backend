@@ -32,6 +32,7 @@ const createUserChallenge = async (request, h) => {
       userId,
       challengeId,
       points: 0,
+      finish: false,
       difficulty: difficulty || 0,
       exp: exp || 0,
     });
@@ -77,6 +78,7 @@ const getAllUserChallengeHandler = async (request, h) => {
         endTime: new Date(challengeSnap.data().endTime.seconds * 1000),
         goals: challengeSnap.data().goals,
         points: doc.data().points,
+        finish: doc.data().finish,
         difficulty: doc.data().difficulty,
         exp: doc.data().exp,
       });
@@ -127,6 +129,7 @@ const getUserChallengeHandler = async (request, h) => {
         endTime: new Date(challenge.data().endTime.seconds * 1000),
         goals: challenge.data().goals,
         points: userChallenge.data().points,
+        finish: userChallenge.data().finish,
         difficulty: userChallenge.data().difficulty,
         exp: userChallenge.data().exp,
       },
@@ -169,10 +172,20 @@ const updateUserChallengeHandler = async (request, h) => {
       return response;
     }
 
+    const challenge = await db
+      .collection('challenges')
+      .doc(userChallenge.data().challengeId)
+      .get();
+
     // check undefined properties
     const updatedUserChallenge = {};
     if (points) {
       updatedUserChallenge.points = points;
+      if (points >= challenge.data().goals) {
+        updatedUserChallenge.finish = true;
+      } else {
+        updatedUserChallenge.finish = false;
+      }
     }
 
     // update user challenge

@@ -33,6 +33,7 @@ const createGroupActivityHandler = async (request, h) => {
         finishTime !== undefined
           ? Timestamp.fromDate(new Date(finishTime))
           : null,
+      finish: false,
       location: location || '',
     });
     groupActivitiesRef.doc(groupActivityRes.id).update({
@@ -80,6 +81,7 @@ const getAllGroupActivitiesHandler = async (request, h) => {
             doc.data().finishTime !== null
               ? new Date(doc.data().finishTime.seconds * 1000)
               : null,
+          finish: doc.data().finish,
           location: doc.data().location,
         });
       });
@@ -106,6 +108,7 @@ const getAllGroupActivitiesHandler = async (request, h) => {
           doc.data().finishTime !== null
             ? new Date(doc.data().finishTime.seconds * 1000)
             : null,
+        finish: doc.data().finish,
         location: doc.data().location,
       });
     });
@@ -151,6 +154,7 @@ const getGroupActivityHandler = async (request, h) => {
           groupActivity.data().finishTime !== null
             ? new Date(groupActivity.data().finishTime.seconds * 1000)
             : null,
+        finish: groupActivity.data().finish,
         location: groupActivity.data().location,
       },
     });
@@ -223,6 +227,7 @@ const updateGroupActivityHandler = async (request, h) => {
     }
     if (finishTime) {
       updatedActivity.finishTime = Timestamp.fromDate(new Date(finishTime));
+      updatedActivity.finish = true;
     }
     if (location) {
       updatedActivity.location = Timestamp.fromDate(new Date(location));

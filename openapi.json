@@ -2106,6 +2106,9 @@
           "finishTime": {
             "type": "string"
           },
+          "finish": {
+            "type": "boolean"
+          },
           "difficulty": {
             "type": "number"
           },
@@ -2134,6 +2137,9 @@
           },
           "finishTime": {
             "type": "string"
+          },
+          "finish": {
+            "type": "boolean"
           },
           "location": {
             "type": "string"
@@ -2239,6 +2245,9 @@
           },
           "points": {
             "type": "number"
+          },
+          "finish": {
+            "type": "boolean"
           },
           "difficulty": {
             "type": "number"
