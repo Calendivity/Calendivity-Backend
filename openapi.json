@@ -326,12 +326,6 @@
                   },
                   "endTime": {
                     "type": "string"
-                  },
-                  "difficulty": {
-                    "type": "number"
-                  },
-                  "exp": {
-                    "type": "number"
                   }
                 }
               }
@@ -474,12 +468,6 @@
                   },
                   "finishTime": {
                     "type": "string"
-                  },
-                  "difficulty": {
-                    "type": "number"
-                  },
-                  "exp": {
-                    "type": "number"
                   }
                 }
               }

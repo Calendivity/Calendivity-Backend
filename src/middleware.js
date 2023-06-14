@@ -13,7 +13,27 @@ const verifyGoogle = async (request, h) => {
       config,
     );
 
-    request.authUser = userInfoRes.data;
+    const userRes = await db
+      .collection('users')
+      .doc(userInfoRes.data.email)
+      .get();
+    const user = userRes.data();
+
+    const userData = {
+      email: user.email,
+      name: user.name,
+      picture: userInfoRes.data.picture,
+      age: user.age,
+      lastEducation: user.lastEducation,
+      job: user.job,
+      gender: user.gender,
+      education: user.education,
+      employmentType: user.employmentType,
+      level: user.level,
+      exp: user.exp,
+    };
+
+    request.authUser = userData;
 
     return h.continue;
   } catch (err) {
