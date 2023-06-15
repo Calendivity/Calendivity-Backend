@@ -34,9 +34,37 @@ const getActivityRecomendation = async (request, h) => {
     );
     const activityRecomendations = activityRecomendationsRes.data;
 
+    const translate = async (text) => {
+      const config = {
+        method: 'post',
+        url: 'https://translation.googleapis.com/language/translate/v2',
+        headers: {
+          // eslint-disable-next-line quote-props
+          Authorization: request.headers.authorization,
+          'Content-Type': 'application/json',
+        },
+        data: {
+          q: text[0].toUpperCase() + text.substr(1),
+          source: 'en',
+          target: 'id',
+          format: 'text',
+        },
+      };
+
+      return axios
+        .request(config)
+        .then((response) => {
+          // console.log(response.data.data.translations[0].translatedText);
+          return response.data.data.translations[0].translatedText;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    };
+
     const activities = [];
     for (const key in activityRecomendations) {
-      activities.push(activityRecomendations[key]);
+      activities.push(await translate(activityRecomendations[key]));
     }
 
     const response = h.response({
@@ -55,8 +83,7 @@ const getActivityRecomendation = async (request, h) => {
 
 const createUserActivityHandler = async (request, h) => {
   try {
-    const {activityName, description, startTime, endTime} =
-      request.payload;
+    const {activityName, description, startTime, endTime} = request.payload;
     const userId = request.authUser.email;
 
     // check request body payload
@@ -242,13 +269,7 @@ const updateUserActivityHandler = async (request, h) => {
       request.payload;
 
     // check request body payload
-    if (
-      !activityName &&
-      !description &&
-      !startTime &&
-      !endTime &&
-      !finish
-    ) {
+    if (!activityName && !description && !startTime && !endTime && !finish) {
       const response = h.response({
         message: 'no content',
       });
