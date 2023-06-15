@@ -9,7 +9,6 @@ const createGroupActivityHandler = async (request, h) => {
       description,
       startTime,
       endTime,
-      finishTime,
       location,
     } = request.payload;
 
@@ -29,10 +28,6 @@ const createGroupActivityHandler = async (request, h) => {
       description: description || '',
       startTime: Timestamp.fromDate(new Date(startTime)),
       endTime: Timestamp.fromDate(new Date(endTime)),
-      finishTime:
-        finishTime !== undefined
-          ? Timestamp.fromDate(new Date(finishTime))
-          : null,
       finish: false,
       location: location || '',
     });
@@ -77,10 +72,6 @@ const getAllGroupActivitiesHandler = async (request, h) => {
           description: doc.data().description,
           startTime: new Date(doc.data().startTime.seconds * 1000),
           endTime: new Date(doc.data().endTime.seconds * 1000),
-          finishTime:
-            doc.data().finishTime !== null
-              ? new Date(doc.data().finishTime.seconds * 1000)
-              : null,
           finish: doc.data().finish,
           location: doc.data().location,
         });
@@ -104,10 +95,6 @@ const getAllGroupActivitiesHandler = async (request, h) => {
         description: doc.data().description,
         startTime: new Date(doc.data().startTime.seconds * 1000),
         endTime: new Date(doc.data().endTime.seconds * 1000),
-        finishTime:
-          doc.data().finishTime !== null
-            ? new Date(doc.data().finishTime.seconds * 1000)
-            : null,
         finish: doc.data().finish,
         location: doc.data().location,
       });
@@ -150,10 +137,6 @@ const getGroupActivityHandler = async (request, h) => {
         description: groupActivity.data().description,
         startTime: new Date(groupActivity.data().startTime.seconds * 1000),
         endTime: new Date(groupActivity.data().endTime.seconds * 1000),
-        finishTime:
-          groupActivity.data().finishTime !== null
-            ? new Date(groupActivity.data().finishTime.seconds * 1000)
-            : null,
         finish: groupActivity.data().finish,
         location: groupActivity.data().location,
       },
@@ -177,9 +160,8 @@ const updateGroupActivityHandler = async (request, h) => {
       description,
       startTime,
       endTime,
-      finishTime,
+      finish,
       location,
-      isFinish,
     } = request.payload;
 
     // check request body paylaod
@@ -188,9 +170,8 @@ const updateGroupActivityHandler = async (request, h) => {
       !description &&
       !startTime &&
       !endTime &&
-      !finishTime &&
-      !location &&
-      isFinish === undefined
+      !finish &&
+      !location
     ) {
       const response = h.response({
         message: 'no content',
@@ -225,9 +206,8 @@ const updateGroupActivityHandler = async (request, h) => {
     if (endTime) {
       updatedActivity.endTime = Timestamp.fromDate(new Date(endTime));
     }
-    if (finishTime) {
-      updatedActivity.finishTime = Timestamp.fromDate(new Date(finishTime));
-      updatedActivity.finish = true;
+    if (finish) {
+      updatedActivity.finish = finish;
     }
     if (location) {
       updatedActivity.location = Timestamp.fromDate(new Date(location));

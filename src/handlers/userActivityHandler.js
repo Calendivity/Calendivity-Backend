@@ -55,7 +55,7 @@ const getActivityRecomendation = async (request, h) => {
 
 const createUserActivityHandler = async (request, h) => {
   try {
-    const {activityName, description, startTime, endTime, finishTime} =
+    const {activityName, description, startTime, endTime} =
       request.payload;
     const userId = request.authUser.email;
 
@@ -105,10 +105,6 @@ const createUserActivityHandler = async (request, h) => {
       description: description || '',
       startTime: Timestamp.fromDate(new Date(startTime)),
       endTime: Timestamp.fromDate(new Date(endTime)),
-      finishTime:
-        finishTime !== undefined
-          ? Timestamp.fromDate(new Date(finishTime))
-          : null,
       finish: false,
       difficulty: difficulty.difficulty,
       exp: difficulty.exp,
@@ -155,10 +151,6 @@ const getAllUserActivitiesHandler = async (request, h) => {
           description: doc.data().description,
           startTime: new Date(doc.data().startTime.seconds * 1000),
           endTime: new Date(doc.data().endTime.seconds * 1000),
-          finishTime:
-            doc.data().finishTime !== null
-              ? new Date(doc.data().finishTime.seconds * 1000)
-              : null,
           finish: doc.data().finish,
           difficulty: doc.data().difficulty,
           exp: doc.data().exp,
@@ -183,10 +175,6 @@ const getAllUserActivitiesHandler = async (request, h) => {
         description: doc.data().description,
         startTime: new Date(doc.data().startTime.seconds * 1000),
         endTime: new Date(doc.data().endTime.seconds * 1000),
-        finishTime:
-          doc.data().finishTime !== null
-            ? new Date(doc.data().finishTime.seconds * 1000)
-            : null,
         finish: doc.data().finish,
         difficulty: doc.data().difficulty,
         exp: doc.data().exp,
@@ -231,10 +219,6 @@ const getUserActivityHandler = async (request, h) => {
         description: userActivity.data().description,
         startTime: new Date(userActivity.data().startTime.seconds * 1000),
         endTime: new Date(userActivity.data().endTime.seconds * 1000),
-        finishTime:
-          userActivity.data().finishTime !== null
-            ? new Date(userActivity.data().finishTime.seconds * 1000)
-            : null,
         finish: userActivity.data().finish,
         difficulty: userActivity.data().difficulty,
         exp: userActivity.data().exp,
@@ -254,7 +238,7 @@ const getUserActivityHandler = async (request, h) => {
 const updateUserActivityHandler = async (request, h) => {
   try {
     const {activityId} = request.params;
-    const {activityName, description, startTime, endTime, finishTime} =
+    const {activityName, description, startTime, endTime, finish} =
       request.payload;
 
     // check request body payload
@@ -263,7 +247,7 @@ const updateUserActivityHandler = async (request, h) => {
       !description &&
       !startTime &&
       !endTime &&
-      !finishTime
+      !finish
     ) {
       const response = h.response({
         message: 'no content',
@@ -298,9 +282,8 @@ const updateUserActivityHandler = async (request, h) => {
     if (endTime) {
       updatedActivity.endTime = Timestamp.fromDate(new Date(endTime));
     }
-    if (finishTime) {
-      updatedActivity.finishTime = Timestamp.fromDate(new Date(finishTime));
-      updatedActivity.finish = true;
+    if (finish) {
+      updatedActivity.finish = finish;
     }
 
     userActivitiesRef.doc(activityId).update(updatedActivity);
