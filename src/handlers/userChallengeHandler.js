@@ -1,9 +1,10 @@
 const {db} = require('../../firestore');
+const axios = require('axios');
 
 const createUserChallenge = async (request, h) => {
   try {
     const userId = request.authUser.email;
-    const {challengeId, difficulty, exp} = request.payload;
+    const {challengeId} = request.payload;
 
     // check request body paylaod
     if (!challengeId) {
@@ -16,6 +17,37 @@ const createUserChallenge = async (request, h) => {
 
     const challengesRef = await db.collection('challenges');
     const challenge = await challengesRef.doc(challengeId).get();
+
+    const dst = new Date(challenge.data().startTime.seconds * 1000);
+    const st = dst.getUTCHours() * 60 + dst.getMinutes();
+    const det = new Date(challenge.data().endTime.seconds * 1000);
+    const et = det.getUTCHours() * 60 + det.getMinutes();
+    const dur = et - st;
+    const activityName = challenge.data().challengeName;
+
+    const user = request.authUser;
+    const difficultyRes = await axios.get(
+      'http://34.173.91.244/difficulty?' +
+        'age=' +
+        user.age +
+        '&lastEducation=' +
+        user.lastEducation +
+        '&job=' +
+        user.job +
+        '&gender=' +
+        user.gender +
+        '&education=' +
+        user.education +
+        '&employmentType=' +
+        user.employmentType +
+        '&activityName=' +
+        activityName +
+        '&startTime=' +
+        st +
+        '&duration=' +
+        dur,
+    );
+    const difficulty = difficultyRes.data;
 
     // check if challenge exists
     if (!challenge.exists) {
@@ -33,8 +65,8 @@ const createUserChallenge = async (request, h) => {
       challengeId,
       points: 0,
       finish: false,
-      difficulty: difficulty || 0,
-      exp: exp || 0,
+      difficulty: difficulty.difficulty,
+      exp: difficulty.exp,
     });
     userChallengesRef.doc(userChallengeSnap.id).update({
       userChallengeId: userChallengeSnap.id,
@@ -180,8 +212,32 @@ const updateUserChallengeHandler = async (request, h) => {
     // check undefined properties
     const updatedUserChallenge = {};
     if (points) {
-      updatedUserChallenge.points = points;
-      if (points >= challenge.data().goals) {
+      const goals = challenge.data().goals;
+      const userPoints = userChallenge.data().points;
+      updatedUserChallenge.points = points >= goals ? goals : points;
+
+      const config = {
+        method: 'put',
+        url: 'https://backend-6o3njyuh4q-et.a.run.app/users/level',
+        headers: {
+          // eslint-disable-next-line quote-props
+          Authorization: request.headers.authorization,
+          'Content-Type': 'application/json',
+        },
+      };
+      let exp = 0;
+      if (points > userPoints && points < goals) {
+        exp = userChallenge.data().exp * (points - userPoints);
+      }
+      if (points < userPoints && points > 0) {
+        exp = -(userChallenge.data().exp * (userPoints - points));
+      }
+      config.data = {
+        exp: exp,
+      };
+      axios.request(config);
+
+      if (updatedUserChallenge.points >= goals) {
         updatedUserChallenge.finish = true;
       } else {
         updatedUserChallenge.finish = false;

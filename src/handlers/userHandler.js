@@ -113,14 +113,14 @@ const updateUserLevel = async (request, h) => {
     const userRes = await userRef.get();
     const user = await userRes.data();
 
-    const updatedUserLevel = {
-      exp: user.exp + exp,
-    };
+    const updatedUserLevel = {};
 
-    const expThreshold = 25 * Math.pow(2, user.level - 1);
-    if (updatedUserLevel.exp >= expThreshold) {
-      updatedUserLevel.level = user.level + 1;
-    }
+    const newExp = user.exp + exp < 0 ? 0 : user.exp + exp;
+    updatedUserLevel.exp = newExp;
+
+    const newLevel =
+      updatedUserLevel.exp / 25 < 1 ? 1 : updatedUserLevel.exp / 25;
+    updatedUserLevel.level = parseInt(newLevel);
 
     userRef.update(updatedUserLevel);
 

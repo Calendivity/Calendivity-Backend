@@ -269,7 +269,13 @@ const updateUserActivityHandler = async (request, h) => {
       request.payload;
 
     // check request body payload
-    if (!activityName && !description && !startTime && !endTime && !finish) {
+    if (
+      !activityName &&
+      !description &&
+      !startTime &&
+      !endTime &&
+      finish === undefined
+    ) {
       const response = h.response({
         message: 'no content',
       });
@@ -303,8 +309,28 @@ const updateUserActivityHandler = async (request, h) => {
     if (endTime) {
       updatedActivity.endTime = Timestamp.fromDate(new Date(endTime));
     }
-    if (finish) {
+    if (finish !== undefined) {
       updatedActivity.finish = finish;
+      const config = {
+        method: 'put',
+        url: 'https://backend-6o3njyuh4q-et.a.run.app/users/level',
+        headers: {
+          // eslint-disable-next-line quote-props
+          Authorization: request.headers.authorization,
+          'Content-Type': 'application/json',
+        },
+      };
+      let exp = 0;
+      if (finish && !userActivity.data().finish) {
+        exp = userActivity.data().exp;
+      }
+      if (!finish && userActivity.data().finish) {
+        exp = -userActivity.data().exp;
+      }
+      config.data = {
+        exp: exp,
+      };
+      axios.request(config);
     }
 
     userActivitiesRef.doc(activityId).update(updatedActivity);
