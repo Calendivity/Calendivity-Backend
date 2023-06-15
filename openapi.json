@@ -119,7 +119,7 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "accessToken": {
+                    "access_token": {
                       "type": "string"
                     }
                   }
@@ -289,6 +289,58 @@
                             "type": "string"
                           }
                         }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/users/activities/recomendation": {
+      "get": {
+        "tags": ["user activity"],
+        "summary": "Get user activity recomendations",
+        "description": "Get user activity recomendations",
+        "parameters": [
+          {
+            "name": "startTime",
+            "in": "query",
+            "description": "start time",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "endTime",
+            "in": "query",
+            "description": "end time",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
                       }
                     }
                   }

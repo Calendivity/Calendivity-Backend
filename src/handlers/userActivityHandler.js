@@ -2,6 +2,57 @@ const {Timestamp} = require('@google-cloud/firestore');
 const {db} = require('../../firestore');
 const axios = require('axios');
 
+const getActivityRecomendation = async (request, h) => {
+  try {
+    const user = request.authUser;
+    const {startTime, endTime} = request.query;
+
+    const dst = new Date(startTime);
+    const st = dst.getUTCHours() * 60 + dst.getMinutes();
+    const det = new Date(endTime);
+    const et = det.getUTCHours() * 60 + det.getMinutes();
+    const dur = et - st;
+
+    const activityRecomendationsRes = await axios.get(
+      'http://34.173.91.244/activity?' +
+        'age=' +
+        user.age +
+        '&lastEducation=' +
+        user.lastEducation +
+        '&job=' +
+        user.job +
+        '&gender=' +
+        user.gender +
+        '&education=' +
+        user.education +
+        '&employmentType=' +
+        user.employmentType +
+        '&startTime=' +
+        st +
+        '&duration=' +
+        dur,
+    );
+    const activityRecomendations = activityRecomendationsRes.data;
+
+    const activities = [];
+    for (const key in activityRecomendations) {
+      activities.push(activityRecomendations[key]);
+    }
+
+    const response = h.response({
+      data: activities,
+    });
+    response.code(200);
+    return response;
+  } catch (err) {
+    const response = h.response({
+      message: err.message,
+    });
+    response.code(500);
+    return response;
+  }
+};
+
 const createUserActivityHandler = async (request, h) => {
   try {
     const {activityName, description, startTime, endTime, finishTime} =
@@ -203,13 +254,8 @@ const getUserActivityHandler = async (request, h) => {
 const updateUserActivityHandler = async (request, h) => {
   try {
     const {activityId} = request.params;
-    const {
-      activityName,
-      description,
-      startTime,
-      endTime,
-      finishTime,
-    } = request.payload;
+    const {activityName, description, startTime, endTime, finishTime} =
+      request.payload;
 
     // check request body payload
     if (
@@ -305,6 +351,7 @@ const deleteUserActivityHandler = async (request, h) => {
   }
 };
 module.exports = {
+  getActivityRecomendation,
   createUserActivityHandler,
   getAllUserActivitiesHandler,
   getUserActivityHandler,

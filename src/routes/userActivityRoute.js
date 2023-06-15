@@ -1,5 +1,6 @@
 const {verifyGoogle} = require('../middleware');
 const {
+  getActivityRecomendation,
   createUserActivityHandler,
   getAllUserActivitiesHandler,
   getUserActivityHandler,
@@ -8,6 +9,14 @@ const {
 } = require('../handlers/userActivityHandler');
 
 const userActivityRoute = [
+  {
+    method: 'GET',
+    path: '/users/activities/recomendation',
+    options: {
+      pre: [{method: verifyGoogle}],
+      handler: getActivityRecomendation,
+    },
+  },
   {
     method: 'POST',
     path: '/users/activities',
