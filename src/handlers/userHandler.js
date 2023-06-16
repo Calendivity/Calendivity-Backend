@@ -120,7 +120,7 @@ const updateUserLevel = async (request, h) => {
 
     const newLevel =
       updatedUserLevel.exp / 25 < 1 ? 1 : updatedUserLevel.exp / 25;
-    updatedUserLevel.level = parseInt(newLevel);
+    updatedUserLevel.level = Math.ceil(newLevel);
 
     userRef.update(updatedUserLevel);
 
